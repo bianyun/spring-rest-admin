@@ -1,0 +1,11 @@
+
+export const ROLE_SUPERADMIN = 'SUPERADMIN'
+export const ALL_PERMS = '*'
+export const ENUM_CLASS_NAME_GENDER = 'Gender'
+
+export const DEFUALT_DURATION_SUCCESS = 2500
+export const DEFUALT_DURATION_WARNING = 2000
+export const DEFUALT_DURATION_ERROR = 1500
+export const DEFUALT_DURATION_INFO = 1500
+
+
