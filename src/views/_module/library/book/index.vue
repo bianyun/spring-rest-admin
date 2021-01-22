@@ -202,8 +202,6 @@ export default {
   },
   created() {
     this.fetchTableData()
-    this.fetchAllPublishers()
-    this.fetchAllAuthors()
   },
   methods: {
     async fetchTableData() {
@@ -212,12 +210,6 @@ export default {
       this.tableData = list
       this.total = totalElements
       this.tableDataLoading = false
-    },
-    async fetchAllPublishers() {
-      this.publishers = await publisherApi.$getAll()
-    },
-    async fetchAllAuthors() {
-      this.authors = await authorApi.$getAll()
     },
 
     onPagination({ page, limit }) {
@@ -257,7 +249,10 @@ export default {
       this.multipleSelection = val
     },
 
-    onAddBtnClick() {
+    async onAddBtnClick() {
+      this.publishers = await publisherApi.$getAll()
+      this.authors = await authorApi.$getAll()
+
       this.editDialogStatus = DialogStatus.ADD
       Object.assign(this.tempFormModel, this.initTempModel)
       this.showEditDialog = true

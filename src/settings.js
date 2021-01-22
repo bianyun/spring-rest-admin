@@ -1,5 +1,5 @@
 module.exports = {
-  title: 'Spring-Rest Admin',
+  title: "Spring-Rest Admin",
 
   /**
    * @type {boolean} true | false

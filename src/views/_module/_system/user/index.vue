@@ -271,7 +271,6 @@ export default {
   },
   created() {
     this.fetchTableData()
-    this.fetchAllRoles()
   },
   methods: {
     async fetchTableData() {
@@ -281,11 +280,10 @@ export default {
       this.total = totalElements
       this.tableDataLoading = false
     },
-    async fetchAllRoles() {
-      this.allRoles = await roleApi.$getAll()
-    },
 
     async onAssignRoleBtnClick({ sys_user__id: id, sys_user__name, sys_user__nickname }) {
+      this.allRoles = await roleApi.$getAll()
+
       this.tempAssignRoleObj.id = id
       this.tempAssignRoleObj.username = sys_user__name
       this.tempAssignRoleObj.nickname = sys_user__nickname

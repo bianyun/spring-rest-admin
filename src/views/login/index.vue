@@ -311,11 +311,12 @@ $light_gray:#eee;
     position: relative;
 
     .title {
-      font-size: 26px;
+      font-size: 30px;
+      letter-spacing: 3px;
       color: $light_gray;
       margin: 0 auto 40px auto;
       text-align: center;
-      font-weight: bold;
+      font-weight: bolder;
     }
   }
 
