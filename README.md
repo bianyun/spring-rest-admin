@@ -101,7 +101,9 @@ vue-element-admin 支持多环境配置，环境配置文件名格式为 `.env.[
 
 ![](https://cdn.jsdelivr.net/gh/bianyun1981/CDN@latest/img/readme/2021-02/2021-02-01-162540-158.png)
 
-**注意：** 除了开发环境配置 `.env.development` 和 `.env.development.local` 以外，其它环境配置文件都需要设置 `NODE_ENV = production` ，环境名 `ENV` 需要与 环境配置文件名中 `.env` 与 `.local`中间的部分对应，另外，接口调用地址前缀 VUE_APP_BASE_API 也要记得修改。
+**注意：** 除了开发环境配置 `.env.development` 和 `.env.development.local` 以外，其它环境配置文件都需要设置 `NODE_ENV = production` ，环境名 `ENV` 需要与 环境配置文件名中 `.env` 与 `.local`中间的部分对应，另外，接口调用地址前缀 `VUE_APP_BASE_API` 也要记得修改。
+
+**注：** 配置文件中如果要定义其它的环境变量，需要以 `VUE_APP_` 开头，在代码中通过 `process.env.VUE_APP_xxxx` 的方式获取。
 
 ### 打包部署
 
