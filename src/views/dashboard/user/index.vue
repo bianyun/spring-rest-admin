@@ -240,10 +240,15 @@ export default {
   margin: 0 auto;
 }
 
-
-
 .dashboard-editor-container {
+  min-height: calc(88vh + #{$tagsViewHeight});
   background-color: #F2F6FC;
+}
+
+.hasTagsView {
+  .dashboard-editor-container {
+    min-height: 88vh;
+  }
 }
 
 .pan-info-roles {
@@ -320,6 +325,24 @@ $heightExceptScrollBarInContainer: 4px + $navBarHeight + 2*$appContainerPadding 
     height: calc(100vh - #{$heightExceptScrollBarInContainer + $tagsViewHeight});
     ::v-deep .el-scrollbar__wrap {
       height: calc(100vh - #{$heightExceptScrollBarInContainer + $tagsViewHeight});
+    }
+  }
+}
+
+.hasPageFooter {
+  .el-scrollbar {
+    height: calc(100vh - #{$heightExceptScrollBarInContainer + 0.5*$pageFooterHeight});
+    ::v-deep .el-scrollbar__wrap {
+      height: calc(100vh - #{$heightExceptScrollBarInContainer + 0.5*$pageFooterHeight});
+    }
+  }
+}
+
+.hasTagsView.hasPageFooter {
+  .el-scrollbar {
+    height: calc(100vh - #{$heightExceptScrollBarInContainer + $tagsViewHeight + 0.5*$pageFooterHeight});
+    ::v-deep .el-scrollbar__wrap {
+      height: calc(100vh - #{$heightExceptScrollBarInContainer + $tagsViewHeight + 0.5*$pageFooterHeight});
     }
   }
 }

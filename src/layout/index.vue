@@ -2,12 +2,13 @@
   <div :class="classObj" class="app-wrapper">
     <div v-if="device==='mobile'&&sidebar.opened" class="drawer-bg" @click="handleClickOutside" />
     <sidebar class="sidebar-container" />
-    <div :class="{hasTagsView:needTagsView}" class="main-container">
+    <div :class="{hasTagsView:needTagsView, hasPageFooter:needPageFooter}" class="main-container">
       <div :class="{'fixed-header':fixedHeader}">
         <navbar />
         <tags-view v-if="needTagsView" />
       </div>
       <app-main />
+      <page-footer v-if="needPageFooter" />
       <right-panel v-if="showSettings">
         <settings />
       </right-panel>
@@ -17,7 +18,7 @@
 
 <script>
 import RightPanel from '@/components/RightPanel'
-import { AppMain, Navbar, Settings, Sidebar, TagsView } from './components'
+import { AppMain, PageFooter, Navbar, Settings, Sidebar, TagsView } from './components'
 import ResizeMixin from './mixin/ResizeHandler'
 import { mapState } from 'vuex'
 
@@ -29,7 +30,8 @@ export default {
     RightPanel,
     Settings,
     Sidebar,
-    TagsView
+    TagsView,
+    PageFooter
   },
   mixins: [ResizeMixin],
   computed: {
@@ -47,7 +49,11 @@ export default {
         withoutAnimation: this.sidebar.withoutAnimation,
         mobile: this.device === 'mobile'
       }
-    }
+    },
+    needPageFooter() {
+      console.log(process.env.VUE_APP_FOOTER_INFO_COPYRIGHT || process.env.VUE_APP_FOOTER_INFO_BEIAN)
+      return process.env.VUE_APP_FOOTER_INFO_COPYRIGHT || process.env.VUE_APP_FOOTER_INFO_BEIAN
+    },
   },
   methods: {
     handleClickOutside() {

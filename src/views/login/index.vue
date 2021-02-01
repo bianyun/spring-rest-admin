@@ -3,7 +3,8 @@
     <el-form ref="loginForm" :model="loginForm" :rules="rules" class="login-form" autocomplete="on" label-position="left">
 
       <div class="title-container">
-        <h3 class="title">系统登录</h3>
+        <h2 class="title site-title">Spring-Rest Admin</h2>
+        <h3 class="title login-title sparse">系统登录</h3>
       </div>
 
       <el-form-item prop="username">
@@ -82,6 +83,10 @@
       <br>
 <!--      <social-sign />-->
     </el-dialog>
+
+    <div v-if="beianNo" class="page-footer">
+      &copy; 2021 <a href="https://www.wisecoder.work">小小代码客</a> | <a href="https://beian.miit.gov.cn/" target="_blank">{{beianNo}}</a>
+    </div>
   </div>
 </template>
 
@@ -133,6 +138,11 @@ export default {
   },
   created() {
     // window.addEventListener('storage', this.afterQRScan)
+  },
+  computed: {
+    beianNo() {
+      return process.env.VUE_APP_BEIAN_NO
+    },
   },
   mounted() {
     // if (this.loginForm.username === '') {
@@ -268,6 +278,7 @@ $cursor: #fff;
 </style>
 
 <style lang="scss" scoped>
+@import "~@/styles/variables.scss";
 $bg:#2d3a4b;
 $dark_gray:#889aa4;
 $light_gray:#eee;
@@ -310,13 +321,21 @@ $light_gray:#eee;
   .title-container {
     position: relative;
 
-    .title {
+    .login-title {
       font-size: 30px;
-      letter-spacing: 3px;
-      color: $light_gray;
+    }
+    .site-title {
+      font-size: 40px;
+    }
+    .title {
+      color: #F2F2F2;
       margin: 0 auto 40px auto;
       text-align: center;
       font-weight: bolder;
+    }
+
+    .sparse {
+      letter-spacing: 3px;
     }
   }
 
@@ -339,6 +358,24 @@ $light_gray:#eee;
   @media only screen and (max-width: 470px) {
     .thirdparty-button {
       display: none;
+    }
+  }
+
+  .page-footer {
+    color: #dbdee5;
+    position: absolute;
+    height: $pageFooterHeight;
+    line-height: $pageFooterHeight;
+    text-align: center;
+    width: 100%;
+    bottom: 0;
+    font-size: smaller;
+    letter-spacing: 1px;
+
+    a {
+      &:hover {
+        color: #409EFF;
+      }
     }
   }
 }

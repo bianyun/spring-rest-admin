@@ -26,7 +26,7 @@ export default {
 @import "~@/styles/variables.scss";
 
 .app-main {
-  min-height: calc(100vh - #{$navBarHeight});
+  min-height: calc(100vh - #{$navBarHeight} - 80px);
   width: 100%;
   position: relative;
   overflow: hidden;
@@ -38,13 +38,28 @@ export default {
 
 .hasTagsView {
   .app-main {
-    min-height: calc(100% - #{$navBarHeight + $tagsViewHeight});
+    min-height: calc(100vh - #{$navBarHeight + $tagsViewHeight});
   }
 
   .fixed-header+.app-main {
     padding-top: $navBarHeight + $tagsViewHeight;
   }
 }
+
+.hasPageFooter {
+  .app-main {
+    min-height: calc(100vh - #{$navBarHeight + $pageFooterHeight});
+  }
+}
+
+.hasTagsView.hasPageFooter {
+  .app-main {
+    min-height: calc(100vh - #{$navBarHeight + $tagsViewHeight + $pageFooterHeight});
+  }
+}
+
+
+
 </style>
 
 <style lang="scss">

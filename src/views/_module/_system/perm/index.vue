@@ -761,6 +761,24 @@ $heightExceptScrollBarInContainer: 4px + $navBarHeight + 2*$appContainerPadding 
   }
 }
 
+.hasPageFooter {
+  .el-scrollbar {
+    height: calc(100vh - #{$heightExceptScrollBarInContainer + 0.5*$pageFooterHeight});
+    ::v-deep .el-scrollbar__wrap {
+      height: calc(100vh - #{$heightExceptScrollBarInContainer + 0.5*$pageFooterHeight});
+    }
+  }
+}
+
+.hasTagsView.hasPageFooter {
+  .el-scrollbar {
+    height: calc(100vh - #{$heightExceptScrollBarInContainer + $tagsViewHeight + 0.5*$pageFooterHeight});
+    ::v-deep .el-scrollbar__wrap {
+      height: calc(100vh - #{$heightExceptScrollBarInContainer + $tagsViewHeight + 0.5*$pageFooterHeight});
+    }
+  }
+}
+
 
 .custom-tree-node {
   flex: 1;
