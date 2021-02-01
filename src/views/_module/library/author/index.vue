@@ -218,7 +218,7 @@ export default {
           this.fetchTableData()
           this.$notify.success('作者删除成功')
         })
-      }).catch(() => {
+      }).finally(() => {
         this.blurTargetButton(event)
       })
     },
@@ -233,7 +233,7 @@ export default {
           this.fetchTableData()
           this.$notify.success('作者批量删除成功')
         })
-      }).catch(() => {
+      }).finally(() => {
         this.blurTargetButton(event)
       })
     },

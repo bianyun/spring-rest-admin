@@ -91,23 +91,23 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item label="出版社" prop="publisherId">
-          <el-select v-model="tempFormModel.publisherId" filterable placeholder="请选择" style="width: 100%">
+        <el-form-item label="出版社" prop="publisher">
+          <el-select v-model="tempFormModel.publisher" value-key="id" filterable placeholder="请选择" style="width: 100%">
             <el-option
-              v-for="item in publishers"
+              v-for="item in allPublishers"
               :key="item.id"
               :label="item.name"
-              :value="item.id">
+              :value="item">
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="作者" prop="authorIds">
-          <el-select v-model="tempFormModel.authorIds" multiple filterable placeholder="请选择" style="width: 100%">
+        <el-form-item label="作者" prop="authors">
+          <el-select v-model="tempFormModel.authors" value-key="id" multiple filterable placeholder="请选择" style="width: 100%">
             <el-option
-              v-for="item in authors"
+              v-for="item in allAuthors"
               :key="item.id"
               :label="item.name"
-              :value="item.id">
+              :value="item">
             </el-option>
           </el-select>
         </el-form-item>
@@ -146,9 +146,9 @@ export default {
       isbn: '',
       wordCount: null,
       unitPrice: null,
-      publisherId: null,
-      authorIds: [],
-      translaterIds: [],
+      translaters: null,
+      publisher: null,
+      authors: [],
     }
 
     return {
@@ -181,14 +181,13 @@ export default {
         isbn: rules.string('ISBN', 20, null, 'change'),
         wordCount: rules.integer('字数', null, null, 'change'),
         unitPrice: rules.money('单价', 10000, 0, 'change'),
-        publisherId: rules.select('出版社', false),
-        authorIds: rules.select('作者', true),
+        publisher: rules.select('出版社', false),
+        authors: rules.select('作者', true),
         translaters: rules.string('译者', 100, null, 'change', false),
       },
 
-      publishers: [],
-      authors: [],
-      translaters: '',
+      allPublishers: [],
+      allAuthors: [],
     }
   },
   computed: {
@@ -250,8 +249,8 @@ export default {
     },
 
     async onAddBtnClick() {
-      this.publishers = await publisherApi.$getAll()
-      this.authors = await authorApi.$getAll()
+      this.allPublishers = await publisherApi.$getAll()
+      this.allAuthors = await authorApi.$getAll()
 
       this.editDialogStatus = DialogStatus.ADD
       Object.assign(this.tempFormModel, this.initTempModel)
@@ -259,6 +258,9 @@ export default {
     },
 
     async onEditBtnClick(row) {
+      this.allPublishers = await publisherApi.$getAll()
+      this.allAuthors = await authorApi.$getAll()
+
       this.tempFormModel = await bookApi.$findById(this.getIdValueOfFlatQueryObj(row))
       this.tempFormModel.unitPrice = (this.tempFormModel.unitPrice / 100).toFixed(2)
 
@@ -273,7 +275,7 @@ export default {
           this.fetchTableData()
           this.$notify.success('图书删除成功')
         })
-      }).catch(() => {
+      }).finally(() => {
         this.blurTargetButton(event)
       })
     },
@@ -288,7 +290,7 @@ export default {
           this.fetchTableData()
           this.$notify.success('图书批量删除成功')
         })
-      }).catch(() => {
+      }).finally(() => {
         this.blurTargetButton(event)
       })
     },

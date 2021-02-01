@@ -87,7 +87,7 @@ import { mapGetters } from 'vuex'
 import { MenuType, PermLevel, PermType } from '@/utils/enums'
 import treeUtil from '@/views/_module/_system/tree'
 import permApi from '@/api/_system/perm'
-import ElScrollbarFix from '@/components/ScrollBar'
+import ElScrollbarFix from '@/components/ElScrollBarFix'
 
 export default {
   name: 'Dashboard',

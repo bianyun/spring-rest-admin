@@ -354,10 +354,6 @@ export default {
       }
 
       const checkedNodes = treeRef.getCheckedNodes()
-      // const checkedMenuNodeNum = checkedNodes.filter(node => {
-      //   const { permType, menuType } = node
-      //   return permType === PermType.MENU && menuType !== MenuType.DIR
-      // }).length
       const checkedMenuNodeNum = checkedNodes.filter(node => node.permType === PermType.MENU).length
 
       const checkedBtnNodeNum = checkedNodes.filter(node => node.permType === PermType.BUTTON).length

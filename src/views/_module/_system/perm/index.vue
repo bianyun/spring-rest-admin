@@ -222,18 +222,18 @@
 </template>
 
 <script>
-import treeUtil from "../tree";
-import { resetAllPropsToNull } from "@/utils";
-import permApi from "@/api/_system/perm";
-import lodash from "lodash-es";
-import deepdash from "deepdash-es";
+import treeUtil from '../tree'
+import { resetAllPropsToNull } from '@/utils'
+import permApi from '@/api/_system/perm'
+import lodash from 'lodash-es'
+import deepdash from 'deepdash-es'
 
 import { DialogStatus, LowerPermType, MenuType, PermLevel, PermType } from '@/utils/enums'
-import { replace } from "lodash-es/string";
-import { debounce } from "lodash-es/function";
+import { replace } from 'lodash-es/string'
+import { debounce } from 'lodash-es/function'
 import { SysPerms } from '@/utils/enums/perms/system'
 import baseMixin from '@/views/_module/_mixins/base-mixin'
-import ElScrollbarFix from '@/components/ScrollBar'
+import ElScrollbarFix from '@/components/ElScrollBarFix'
 
 const _ = deepdash(lodash);
 

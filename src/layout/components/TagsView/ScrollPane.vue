@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import ElScrollbarFix from '@/components/ScrollBar'
+import ElScrollbarFix from '@/components/ElScrollBarFix'
 import variables from '@/styles/variables.scss'
 const tagAndTagSpacing = 4 // tagAndTagSpacing
 

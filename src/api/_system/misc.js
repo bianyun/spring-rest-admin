@@ -1,4 +1,3 @@
-
 import CoreApi from '@/api/_base/core-api'
 
 const URL_PREFIX = '/sys/misc'
@@ -15,9 +14,6 @@ class MiscApi extends CoreApi {
     return super.$_get('/enum-label-name-map')
   }
 
-  getCountryCodeOptions() {
-    return super.$_get('/country-code-options')
-  }
 }
 
 export default new MiscApi()

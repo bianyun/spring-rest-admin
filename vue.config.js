@@ -48,6 +48,39 @@ module.exports = {
       }
     }
   },
+
+  // configureWebpack: config => {
+  //   if (process.env.NODE_ENV === 'production') {
+  //     return {
+  //       name: name,
+  //       resolve: {
+  //         alias: {
+  //           '@': resolve('src')
+  //         }
+  //       },
+  //       plugins: [
+  //         new CompressionWebpackPlugin({
+  //           // filename: '[path].gz[query]',
+  //           // algorithm: 'gzip',
+  //           test: new RegExp('\\.(' + productionGzipExtensions.join('|') + ')$'),
+  //           // threshold: 10240,
+  //           // minRatio: 0.8,
+  //           deleteOriginalAssets: true
+  //         })
+  //       ]
+  //     }
+  //   } else {
+  //     return {
+  //       name: name,
+  //       resolve: {
+  //         alias: {
+  //           '@': resolve('src')
+  //         }
+  //       },
+  //     }
+  //   }
+  // },
+
   chainWebpack(config) {
     // it can improve the speed of the first screen, it is recommended to turn on preload
     config.plugin('preload').tap(() => [
@@ -117,6 +150,17 @@ module.exports = {
             })
           // https:// webpack.js.org/configuration/optimization/#optimizationruntimechunk
           config.optimization.runtimeChunk('single')
+
+          const CompressionWebpackPlugin = require('compression-webpack-plugin')
+          const productionGzipExtensions = ['js', 'css']
+          config.plugin('compressionWebpackPlugin')
+            .use(new CompressionWebpackPlugin({
+              test: new RegExp('\\.(' + productionGzipExtensions.join('|') + ')$'),
+              algorithm: "gzip",
+              threshold: 8192,
+              minRatio: 0.8,
+              filename: "[path][base].gz"
+            }))
         }
       )
   }

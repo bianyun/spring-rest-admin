@@ -29,8 +29,8 @@
           <router-link to="/profile">
             <el-dropdown-item divided><i class="el-icon-user-solid" /> 个人中心</el-dropdown-item>
           </router-link>
-          <el-dropdown-item>
-            <span @click="dialogVisible = true"><svg-icon icon-class="password" /> 修改密码</span></el-dropdown-item>
+          <el-dropdown-item @click.native="dialogVisible = true">
+            <span><svg-icon icon-class="password" /> 修改密码</span></el-dropdown-item>
           <el-dropdown-item divided @click.native="logout">
             <i style="font-weight: bold;" class="el-icon-switch-button" /> 退出登录
           </el-dropdown-item>

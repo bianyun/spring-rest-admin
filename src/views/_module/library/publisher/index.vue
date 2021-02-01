@@ -219,7 +219,7 @@ export default {
           this.fetchTableData()
           this.$notify.success('出版社删除成功')
         })
-      }).catch(() => {
+      }).finally(() => {
         this.blurTargetButton(event)
       })
     },
@@ -234,7 +234,7 @@ export default {
           this.fetchTableData()
           this.$notify.success('出版社批量删除成功')
         })
-      }).catch(() => {
+      }).finally(() => {
         this.blurTargetButton(event)
       })
     },
