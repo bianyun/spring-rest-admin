@@ -2,7 +2,7 @@
 
 ## 简介
 
-本项目是基于 Vue, ElementUI 搭建的管理台前端项目，与 [Spring-Rest Backend](https://github.com/bianyun1981/spring-rest-backend) 搭配使用，框架代码来自于 [Vue-Element-Admin](https://github.com/PanJiaChen/vue-element-admin) ，在其基础上做了一点改动。主要优化了权限管理功能。
+本项目是基于 Vue, ElementUI 搭建的管理台前端项目，与 [Spring-Rest Backend](https://github.com/bianyun1981/spring-rest-backend) 搭配使用，框架代码来自于 [Vue-Element-Admin](https://github.com/PanJiaChen/vue-element-admin) ，在其基础上做了一点改动。主要优化了权限管理功能。[**点此处进入在线演示**](https://wisecoder.work)。
 
 ## 优化
 
