@@ -107,7 +107,7 @@ export default {
   components: { Pagination },
   mixins: [baseMixin],
   data() {
-    const pageSizes = [10, 20, 30, 50, 100]
+    // const pageSizes = [10, 20, 30, 50, 100]
     const initTempModel = {
       id: null,
       name: '',
@@ -123,13 +123,6 @@ export default {
       tempFormModel: Object.assign({}, initTempModel),
       tableName: 'dataTable',
       multipleSelection: [],
-      pageSizes: pageSizes,
-      pageQueryParam: {
-        pageNumber: 1,
-        pageSize: pageSizes[0],
-        queryConditionExpr: '',
-        querySortExpr: '',
-      },
 
       listQuery: {
         roleName: '',

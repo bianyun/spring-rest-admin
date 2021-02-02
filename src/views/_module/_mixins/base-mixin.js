@@ -6,13 +6,25 @@ import CountryOptions from '@/utils/consts/country-options'
 
 export default {
   name: 'baseMixin',
+
+
   data: function () {
+    const pageSizes = [7, 10, 20, 30, 50, 100]
     return {
       DELIMITER_BETWEEN_TABLE_AND_FIELD: '__',
       ENUM_CLASS_NAME_GENDER,
 
       enumLabelNameMap: {},
       countryOptions: CountryOptions,
+
+      pageSizes: pageSizes,
+
+      pageQueryParam: {
+        pageNumber: 1,
+        pageSize: pageSizes[0],
+        queryConditionExpr: '',
+        querySortExpr: '',
+      },
     }
   },
   async created() {
