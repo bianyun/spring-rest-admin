@@ -39,8 +39,8 @@
     </div>
 
     <!-- 弹出窗口：修改密码 -->
-    <el-dialog title="修改密码" :visible.sync="dialogVisible" width="25%" @close="resetForm(diaglogFormName)"
-               :close-on-click-modal="false" :modal-append-to-body='false'>
+    <el-dialog title="修改密码" :visible.sync="dialogVisible" :width="resolveDialogWidth()" top="20vh"
+               @close="resetForm(diaglogFormName)" :close-on-click-modal="false" :modal-append-to-body='false'>
       <el-form :ref="diaglogFormName" status-icon :rules="rules" :model="tempFormModel" label-width="80px">
         <el-form-item label="原密码" prop="oldPassword">
           <el-input show-password v-model="tempFormModel.oldPassword"></el-input>
@@ -98,7 +98,7 @@ export default {
     const validateConfirmPassword = (rule, value, callback) => {
       if (!value) {
         callback(new Error('请再次输入密码'))
-      } else if (this.tempFormModel.password && value !== this.tempFormModel.password) {
+      } else if (this.tempFormModel.newPassword && value !== this.tempFormModel.newPassword) {
           callback(new Error('两次输入的密码不一致!'))
       } else {
         callback()
@@ -142,6 +142,9 @@ export default {
     ])
   },
   methods: {
+    resolveDialogWidth() {
+      return window.innerWidth > 1200 ? '25%' : '80%'
+    },
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
     },
