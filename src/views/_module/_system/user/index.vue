@@ -70,12 +70,13 @@
     <pagination v-show="total>0" :total="total" :page.sync="pageQueryParam.pageNumber"
                 :page-sizes="pageSizes" :limit.sync="pageQueryParam.pageSize" @pagination="onPagination" />
 
-    <el-dialog :title="editDialogStatus + '用户'" :visible.sync="showEditDialog" width="50%"
+    <el-dialog :title="editDialogStatus + '用户'" :visible.sync="showEditDialog"
+               :width="resolveDialogWidth('50%')" :top="resolveDialogMarginTop('5vh')"
                @close="resetDataForm(dataFormRef)" :close-on-click-modal="false">
       <el-form :rules="rules" :ref="dataFormRef" :model="tempFormModel"
                :label-width="editDialogStatus === ADD ? '80px' : '70px'">
         <el-row>
-          <el-col :span="12" style="padding-right: 15px;">
+          <el-col :span="12" :xs="24" style="padding-right: 15px;">
             <el-form-item label="用户名" prop="username">
               <el-input v-model.trim="tempFormModel.username"
                         placeholder="长度在 3 到 20 个字符"></el-input>
@@ -88,19 +89,6 @@
               <el-input v-model.trim="tempFormModel.realname"
                         placeholder="长度在 2 到 6 个字符"></el-input>
             </el-form-item>
-            <el-form-item label="密码" prop="password" v-if="editDialogStatus === ADD">
-              <el-input v-model.trim="tempFormModel.password" show-password :clearable="true"
-                        placeholder="长度为 6 到 20 位"></el-input>
-            </el-form-item>
-            <el-form-item label="性别" prop="gender">
-              <el-radio-group v-model="tempFormModel.gender">
-                <el-radio v-for="item in enumLabelNameMap[ENUM_CLASS_NAME_GENDER]"
-                          :key="item.label" :label="item.label">{{ item.name }}
-                </el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12" style="padding-left: 10px; padding-right: 5px">
             <el-form-item label="Email" prop="email">
               <el-input v-model.trim="tempFormModel.email"
                         placeholder="Email"></el-input>
@@ -109,9 +97,22 @@
               <el-input v-model.trim="tempFormModel.mobile"
                         placeholder="请输入手机号码"></el-input>
             </el-form-item>
+          </el-col>
+          <el-col :span="12" :xs="24" style="padding-left: 10px; padding-right: 5px">
+            <el-form-item label="性别" prop="gender">
+              <el-radio-group v-model="tempFormModel.gender">
+                <el-radio v-for="item in enumLabelNameMap[ENUM_CLASS_NAME_GENDER]"
+                          :key="item.label" :label="item.label">{{ item.name }}
+                </el-radio>
+              </el-radio-group>
+            </el-form-item>
             <el-form-item label="头像" prop="pictureUrl">
               <el-input v-model.trim="tempFormModel.pictureUrl"
                         placeholder="头像地址"></el-input>
+            </el-form-item>
+            <el-form-item label="密码" prop="password" v-if="editDialogStatus === ADD">
+              <el-input v-model.trim="tempFormModel.password" show-password :clearable="true"
+                        placeholder="长度为 6 到 20 位"></el-input>
             </el-form-item>
             <el-form-item label="确认密码" prop="confirmPassword" v-if="editDialogStatus === ADD">
               <el-input v-model.trim="tempFormModel.confirmPassword" show-password :clearable="true"
@@ -132,11 +133,10 @@
     </el-dialog>
 
     <!-- 弹窗：用户分配角色 -->
-    <el-dialog width="30%" class="assign-role-dialog"
-               :visible.sync="showAssignRoleDialog"
-               :close-on-click-modal="true">
+    <el-dialog :width="resolveDialogWidth('30%')" :top="resolveDialogMarginTop('25vh')"
+               class="assign-role-dialog" :visible.sync="showAssignRoleDialog" :close-on-click-modal="true">
       <template slot="title">
-        <span>用户分配角色（{{ tempAssignRoleObj.nickname || tempAssignRoleObj.username }}）</span>
+        <span class="el-dialog__title">用户分配角色（{{ tempAssignRoleObj.nickname || tempAssignRoleObj.username }}）</span>
       </template>
       <el-form>
         <el-scrollbar>

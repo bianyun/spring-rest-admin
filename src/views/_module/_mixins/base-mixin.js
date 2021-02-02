@@ -3,6 +3,7 @@ import { hasPerm } from '@/utils/permission'
 import { ENUM_CLASS_NAME_GENDER } from '@/utils/consts'
 import miscApi from '@/api/_system/misc'
 import CountryOptions from '@/utils/consts/country-options'
+import { resolveDialogMarginTop, resolveDialogWidth } from '@/utils/core'
 
 export default {
   name: 'baseMixin',
@@ -31,6 +32,8 @@ export default {
     this.enumLabelNameMap = await miscApi.getEnumLabelNameMap()
   },
   methods: {
+    resolveDialogWidth,
+    resolveDialogMarginTop,
 
     /**
      * 刷新当前用户资料
@@ -139,5 +142,13 @@ export default {
       }
       return value
     },
+
+    // resolveDialogWidth(widthInDesktop, widthInMobile = '95%') {
+    //   return window.innerWidth > 1200 ? widthInDesktop : widthInMobile
+    // },
+    //
+    // resolveDialogMarginTop(mobileMarginTop, desktopMarginTop = '15vh') {
+    //   return window.innerWidth < 1200 ? mobileMarginTop : desktopMarginTop
+    // }
   },
 }

@@ -56,7 +56,8 @@
     <pagination v-show="total>0" :total="total" :page.sync="pageQueryParam.pageNumber"
                 :page-sizes="pageSizes" :limit.sync="pageQueryParam.pageSize" @pagination="onPagination" />
 
-    <el-dialog :title="editDialogStatus + '出版社'" :visible.sync="showEditDialog" width="27%"
+    <el-dialog :title="editDialogStatus + '出版社'" :visible.sync="showEditDialog"
+               :width="resolveDialogWidth('27%')" :top="resolveDialogMarginTop('20vh')"
                @close="resetDataForm(dataFormRef)" :close-on-click-modal="false">
       <el-form :rules="rules" :ref="dataFormRef" :model="tempFormModel" label-width="95px">
         <el-form-item label="名称" prop="name">

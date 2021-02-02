@@ -122,7 +122,8 @@
     </el-row>
 
     <!--弹窗：新增或编辑按钮权限-->
-    <el-dialog :width="buttonDialogWidth()" :title="btnPermDialogTitle" :top="buttonDialogMarginTop()"
+    <el-dialog :width="resolveDialogWidth(buttonDialogWidthRatioMap[showApiPermValuesInBtnDialog])"
+               :title="btnPermDialogTitle" :top="resolveDialogMarginTop('4vh', '12vh')"
                :visible.sync="showBtnPermDialog"
                :close-on-click-modal="false" id="btn-perm-dialog">
       <el-form :rules="btnFormRules" :ref="btnFormRef" :model="btnFormModel" label-width="80px">
@@ -179,7 +180,7 @@
     </el-dialog>
 
     <!--弹窗：菜单关联接口权限-->
-    <el-dialog :width="menuLinkApiDialogWidth()"
+    <el-dialog :width="resolveDialogWidth('28%')"
                :visible.sync="showMenuLinkApiDialog"
                :close-on-click-modal="true" id="menu-link-api-dialog">
       <template slot="title">
@@ -360,15 +361,9 @@ export default {
   },
 
   methods: {
-    buttonDialogWidth() {
-      return window.innerWidth > 1200 ? this.buttonDialogWidthRatioMap[this.showApiPermValuesInBtnDialog] : '95%'
-    },
-    buttonDialogMarginTop() {
-      return window.innerWidth > 1200 ? '12vh' : '4vh'
-    },
-    menuLinkApiDialogWidth() {
-      return window.innerWidth > 1200 ? '28%' : '95%'
-    },
+    // buttonDialogMarginTop() {
+    //   return window.innerWidth > 1200 ? '12vh' : '4vh'
+    // },
 
     async loadApiPermTreeData() {
       const { apiPermTreeData, unsyncedApiPermValues } = await permApi.fetchApiPermMetaData()

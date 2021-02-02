@@ -61,8 +61,8 @@
     <pagination v-show="total>0" :total="total" :page.sync="pageQueryParam.pageNumber"
                 :page-sizes="pageSizes" :limit.sync="pageQueryParam.pageSize" @pagination="onPagination" />
 
-    <el-dialog :title="editDialogStatus + '角色'" :visible.sync='showEditDialog' width='30%'
-               @close='resetDataForm(dataFormRef)' :close-on-click-modal='false'>
+    <el-dialog :title="editDialogStatus + '角色'" :visible.sync='showEditDialog' :width="resolveDialogWidth('30%')"
+               :top="resolveDialogMarginTop('25vh')" @close='resetDataForm(dataFormRef)' :close-on-click-modal='false'>
       <el-form :rules="rules" :ref="dataFormRef" :model="tempFormModel" label-width="70px">
         <el-form-item label="角色名" prop="name">
           <el-input  v-model.trim="tempFormModel.name"
@@ -86,12 +86,12 @@
     </el-dialog>
 
     <!-- 弹窗：角色关联菜单按钮权限 -->
-    <el-dialog width="30%"
+    <el-dialog :width="resolveDialogWidth('30%')" :top="resolveDialogMarginTop('20vh')"
                :visible.sync="showAssignPermDialog"
                :close-on-click-modal="true">
       <template slot="title">
-        <span>角色分配权限（{{ tempFormModel.name }}）</span>
-        <span style="float: right; margin-right: 28px">
+        <span class="el-dialog__title">角色分配权限（{{ tempFormModel.name }}）</span>
+        <span style="display: block; margin-top: 5px">
           <el-tag size="mini">
             <span style="font-size: x-small; font-weight: normal">已选</span>
           </el-tag>

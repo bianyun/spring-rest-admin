@@ -66,7 +66,8 @@
     <pagination v-show="total>0" :total="total" :page.sync="pageQueryParam.pageNumber"
                 :page-sizes="pageSizes" :limit.sync="pageQueryParam.pageSize" @pagination="onPagination" />
 
-    <el-dialog :title="editDialogStatus + '图书'" :visible.sync="showEditDialog" width="38%"
+    <el-dialog :title="editDialogStatus + '图书'" :visible.sync="showEditDialog"
+               :width="resolveDialogWidth('38%')" :top="resolveDialogMarginTop('10vh')"
                @close="resetDataForm(dataFormRef)" :close-on-click-modal="false">
       <el-form :rules="rules" :ref="dataFormRef" :model="tempFormModel" label-width="80px">
         <el-form-item label="标题" prop="title">
@@ -78,14 +79,14 @@
                     placeholder="请输入ISBN"></el-input>
         </el-form-item>
         <el-row :gutter="20">
-          <el-col :span="12">
+          <el-col :span="12" :xs="24">
             <el-form-item label="字数" prop="wordCount">
               <el-input v-model.number="tempFormModel.wordCount">
                 <template slot="append">千字</template>
               </el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="12" :xs="24">
             <el-form-item label="单价 (元)" prop="unitPrice">
               <el-input-number v-model.number="tempFormModel.unitPrice"
                                :precision="2" controls-position="right">

@@ -174,7 +174,7 @@ aside {
 
 .filter-container {
   float: left;
-  @media screen and (min-width: 1200px) {
+  @media screen and (min-width: 700px) {
     padding-bottom: 0;
   }
 
@@ -184,27 +184,27 @@ aside {
     margin-bottom: 10px;
   }
 
-  @media screen and (max-width: 1200px) {
+  @media screen and (max-width: 700px) {
     .el-button.filter-item {
       margin-bottom: 0;
     }
   }
 
   .filter-item.el-input {
-    @media screen and (min-width: 1200px) {
+    @media screen and (min-width: 700px) {
       width: 200px;
     }
-    @media screen and (max-width: 1200px) {
+    @media screen and (max-width: 700px) {
       width: 100%;
     }
     margin-right: 7px;
   }
 
   .filter-item.el-select {
-    @media screen and (min-width: 1200px) {
+    @media screen and (min-width: 700px) {
       width: 200px;
     }
-    @media screen and (max-width: 1200px) {
+    @media screen and (max-width: 700px) {
       width: 100%;
     }
     margin-right: 7px;
@@ -218,7 +218,7 @@ aside {
     display: inline-block;
     vertical-align: middle;
 
-    @media screen and (max-width: 1200px) {
+    @media screen and (max-width: 700px) {
       margin-top: -4rem;
     }
   }

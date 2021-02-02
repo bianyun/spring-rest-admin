@@ -39,8 +39,9 @@
     </div>
 
     <!-- 弹出窗口：修改密码 -->
-    <el-dialog title="修改密码" :visible.sync="dialogVisible" :width="resolveDialogWidth()" top="20vh"
-               @close="resetForm(diaglogFormName)" :close-on-click-modal="false" :modal-append-to-body='false'>
+    <el-dialog title="修改密码" :visible.sync="dialogVisible" @close="resetForm(diaglogFormName)"
+               :width="resolveDialogWidth('25%', '80%')" :top="resolveDialogMarginTop('20vh')"
+               :close-on-click-modal="false" :modal-append-to-body='false'>
       <el-form :ref="diaglogFormName" status-icon :rules="rules" :model="tempFormModel" label-width="80px">
         <el-form-item label="原密码" prop="oldPassword">
           <el-input show-password v-model="tempFormModel.oldPassword"></el-input>
@@ -69,6 +70,7 @@ import Screenfull from '@/components/Screenfull'
 import SizeSelect from '@/components/SizeSelect'
 import Search from '@/components/HeaderSearch'
 import userApi from '@/api/_system/user'
+import { resolveDialogMarginTop, resolveDialogWidth } from '@/utils/core'
 
 export default {
   components: {
@@ -142,9 +144,9 @@ export default {
     ])
   },
   methods: {
-    resolveDialogWidth() {
-      return window.innerWidth > 1200 ? '25%' : '80%'
-    },
+    resolveDialogWidth,
+    resolveDialogMarginTop,
+
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
     },
