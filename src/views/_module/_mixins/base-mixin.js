@@ -3,7 +3,7 @@ import { hasPerm } from '@/utils/permission'
 import { ENUM_CLASS_NAME_GENDER } from '@/utils/consts'
 import miscApi from '@/api/_system/misc'
 import CountryOptions from '@/utils/consts/country-options'
-import { resolveDialogMarginTop, resolveDialogWidth } from '@/utils/core'
+import { resolveDialogMarginTop, resolveDialogWidth } from '@/utils/helper'
 
 export default {
   name: 'baseMixin',

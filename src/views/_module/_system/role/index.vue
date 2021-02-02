@@ -86,7 +86,7 @@
     </el-dialog>
 
     <!-- 弹窗：角色关联菜单按钮权限 -->
-    <el-dialog :width="resolveDialogWidth('30%')" :top="resolveDialogMarginTop('20vh')"
+    <el-dialog :width="resolveDialogWidth('30%')" :top="resolveDialogMarginTop('15vh')"
                :visible.sync="showAssignPermDialog"
                :close-on-click-modal="true">
       <template slot="title">

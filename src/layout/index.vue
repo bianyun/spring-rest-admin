@@ -21,6 +21,7 @@ import RightPanel from '@/components/RightPanel'
 import { AppMain, PageFooter, Navbar, Settings, Sidebar, TagsView } from './components'
 import ResizeMixin from './mixin/ResizeHandler'
 import { mapState } from 'vuex'
+import { needPageFooter } from '@/utils/helper'
 
 export default {
   name: 'Layout',
@@ -50,9 +51,7 @@ export default {
         mobile: this.device === 'mobile'
       }
     },
-    needPageFooter() {
-      return process.env.VUE_APP_FOOTER_INFO_COPYRIGHT || process.env.VUE_APP_FOOTER_INFO_BEIAN
-    },
+    needPageFooter,
   },
   methods: {
     handleClickOutside() {

@@ -1,9 +1,9 @@
 <template>
-  <div class="login-container">
+  <div class="login-container" :class="{hasPageFooter:needPageFooter}">
     <el-form ref="loginForm" :model="loginForm" :rules="rules" class="login-form" autocomplete="on" label-position="left">
 
       <div class="title-container">
-        <h2 class="title site-title">Spring-Rest Admin</h2>
+        <h2 class="title site-title">Spring-Rest 演示项目</h2>
         <h3 class="title login-title sparse">系统登录</h3>
       </div>
 
@@ -91,6 +91,7 @@
 <script>
 // import SocialSign from './components/SocialSignin'
 import { PageFooter } from '@/layout/components'
+import { needPageFooter } from '@/utils/helper'
 
 export default {
   name: 'Login',
@@ -139,9 +140,7 @@ export default {
     // window.addEventListener('storage', this.afterQRScan)
   },
   computed: {
-    beianNo() {
-      return process.env.VUE_APP_BEIAN_NO
-    },
+    needPageFooter,
   },
   mounted() {
     // if (this.loginForm.username === '') {
@@ -283,8 +282,12 @@ $bg:#2d3a4b;
 $dark_gray:#889aa4;
 $light_gray:#eee;
 
-.login-container {
+.login-container.hasPageFooter {
   min-height: calc(100vh - #{$pageFooterHeight});
+}
+
+.login-container {
+  min-height: 100vh;
   width: 100%;
   background-color: $bg;
   overflow: hidden;

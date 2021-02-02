@@ -24,10 +24,3 @@ export function tempCreateATagAndClick(path) {
   document.body.removeChild(aTag)
 }
 
-export function resolveDialogWidth(widthInDesktop, widthInMobile = '95%') {
-  return window.innerWidth > 1200 ? widthInDesktop : widthInMobile
-}
-
-export function resolveDialogMarginTop(mobileMarginTop, desktopMarginTop = '15vh') {
-  return window.innerWidth < 1200 ? mobileMarginTop : desktopMarginTop
-}
