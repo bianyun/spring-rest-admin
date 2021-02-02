@@ -20,6 +20,7 @@ label {
 html {
   height: 100%;
   box-sizing: border-box;
+  font-size: 62.5%;
 }
 
 #app {
@@ -172,7 +173,10 @@ aside {
 }
 
 .filter-container {
-  padding-bottom: 10px;
+  float: left;
+  @media screen and (min-width: 1200px) {
+    padding-bottom: 0;
+  }
 
   .filter-item {
     display: inline-block;
@@ -180,19 +184,45 @@ aside {
     margin-bottom: 10px;
   }
 
+  @media screen and (max-width: 1200px) {
+    .el-button.filter-item {
+      margin-bottom: 0;
+    }
+  }
+
   .filter-item.el-input {
-    width: 200px;
+    @media screen and (min-width: 1200px) {
+      width: 200px;
+    }
+    @media screen and (max-width: 1200px) {
+      width: 100%;
+    }
     margin-right: 7px;
   }
 
   .filter-item.el-select {
-    width: 200px;
+    @media screen and (min-width: 1200px) {
+      width: 200px;
+    }
+    @media screen and (max-width: 1200px) {
+      width: 100%;
+    }
     margin-right: 7px;
   }
 
 }
 
+.table-level-buttons {
+  float: right;
+  .filter-item {
+    display: inline-block;
+    vertical-align: middle;
 
+    @media screen and (max-width: 1200px) {
+      margin-top: -4rem;
+    }
+  }
+}
 
 //refine vue-multiselect plugin
 .multiselect {

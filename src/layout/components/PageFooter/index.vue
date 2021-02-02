@@ -1,6 +1,6 @@
 <template>
   <div class="footer">
-    <span v-if="copyRightAvailable" style="margin-right: 10px">&copy; {{yearInfo}} <a :href="copyrightLink">{{copyrightLabel}}</a></span>
+    <span v-if="copyRightAvailable" style="margin-right: 1rem">&copy; {{yearInfo}} <a :href="copyrightLink">{{copyrightLabel}}</a></span>
     <a v-if="beianInfo" href="https://beian.miit.gov.cn/" target="_blank">{{beianInfo}}</a>
   </div>
 </template>
@@ -53,15 +53,12 @@ export default {
   vertical-align: middle;
   text-align: center;
   width: 100%;
-  bottom: 15px;
-  font-size: smaller;
+  bottom: 1.5rem;
+  font-size: 1.2rem;
   letter-spacing: 1px;
 
   a:hover {
     color: #409EFF;
   }
-
 }
-
-
 </style>

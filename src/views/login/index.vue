@@ -84,18 +84,17 @@
 <!--      <social-sign />-->
     </el-dialog>
 
-    <div v-if="beianNo" class="page-footer">
-      &copy; 2021 <a href="https://www.wisecoder.work">小小代码客</a> | <a href="https://beian.miit.gov.cn/" target="_blank">{{beianNo}}</a>
-    </div>
+    <page-footer />
   </div>
 </template>
 
 <script>
 // import SocialSign from './components/SocialSignin'
+import { PageFooter } from '@/layout/components'
 
 export default {
   name: 'Login',
-  // components: { SocialSign },
+  components: { PageFooter },
   data() {
     return {
       usernameOptions: [
@@ -159,7 +158,6 @@ export default {
       this.capsTooltip = event.getModifierState && event.getModifierState('CapsLock')
     },
     selectBlur(e) {
-      console.log(e.target.value)
       this.loginForm.username = e.target.value
     },
     showPwd() {
@@ -236,6 +234,8 @@ $cursor: #fff;
 /* reset element-ui css */
 .login-container {
   .el-select {
+    position: absolute;
+    right: 0;
     width: 93%;
     .el-input {
       width: 100%;
@@ -284,7 +284,7 @@ $dark_gray:#889aa4;
 $light_gray:#eee;
 
 .login-container {
-  min-height: 100%;
+  min-height: calc(100vh - #{$pageFooterHeight});
   width: 100%;
   background-color: $bg;
   overflow: hidden;
@@ -322,10 +322,10 @@ $light_gray:#eee;
     position: relative;
 
     .login-title {
-      font-size: 30px;
+      font-size: 3rem;
     }
     .site-title {
-      font-size: 40px;
+      font-size: 3.5rem;
     }
     .title {
       color: #F2F2F2;
@@ -361,22 +361,8 @@ $light_gray:#eee;
     }
   }
 
-  .page-footer {
-    color: #dbdee5;
-    position: absolute;
-    height: $pageFooterHeight;
-    line-height: $pageFooterHeight;
-    text-align: center;
-    width: 100%;
-    bottom: 0;
-    font-size: smaller;
-    letter-spacing: 1px;
-
-    a {
-      &:hover {
-        color: #409EFF;
-      }
-    }
+  .footer {
+    color: #c9cbd0;
   }
 }
 </style>

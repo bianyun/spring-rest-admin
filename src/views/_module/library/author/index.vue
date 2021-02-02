@@ -8,17 +8,19 @@
           搜索
         </el-button>
       </div>
-      <div style="float: right">
-        <el-button type="success" class="filter-item" icon="el-icon-plus"
-                   v-if="hasPerm(button_lib_author_add)" size="small" @click="onAddBtnClick">
-          添加
-        </el-button>
-        <el-button type="danger" class="filter-item" icon="el-icon-delete" size="small" @click="onBatchDeleteBtnClick($event)"
-                   v-if="hasPerm(button_lib_author_batch_delete)" :disabled="multipleSelection.length === 0">
-          删除
-        </el-button>
-      </div>
     </div>
+
+    <div class="table-level-buttons">
+      <el-button type="success" class="filter-item" icon="el-icon-plus"
+                 v-if="hasPerm(button_lib_author_add)" size="small" @click="onAddBtnClick">
+        添加
+      </el-button>
+      <el-button type="danger" class="filter-item" icon="el-icon-delete" size="small" @click="onBatchDeleteBtnClick($event)"
+                 v-if="hasPerm(button_lib_author_batch_delete)" :disabled="multipleSelection.length === 0">
+        删除
+      </el-button>
+    </div>
+
     <el-table
       :ref="tableName"
       style="width: 100%"

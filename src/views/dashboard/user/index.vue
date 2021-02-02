@@ -6,16 +6,17 @@
           <div class="pan-info"></div>
           <img class="pan-thumb" :src="avatar" alt="avatar">
         </div>
-        <div class="info-container">
-          <div class="user-info">
-            {{ resolvedDisplayName }}
-            <el-tag :type="resolveTagType(role)" size="mini" effect="dark" v-for="role in roles" :key="role.name">
-              {{ role.name }}
-            </el-tag>
-          </div>
-
+        <span class="user-info">
+          {{ resolvedDisplayName }}
+        </span>
+        <div class="user-roles">
+          <span><el-tag :type="resolveTagType(role)" size="mini" effect="dark" v-for="role in roles" :key="role.name">
+            {{ role.name }}
+          </el-tag></span>
+        </div>
+        <div class="perm-info">
           <el-row :gutter="20">
-            <el-col :span="12">
+            <el-col :span="12" :xs="24">
               <el-card class="perms-card" header="菜单按钮权限">
                 <el-scrollbar-fix :vertical="true">
                   <el-tree
@@ -47,8 +48,8 @@
                 </el-scrollbar-fix>
               </el-card>
             </el-col>
-            <el-col :span="12">
-              <el-card class="perms-card" header="接口权限">
+            <el-col :span="12" :xs="24">
+              <el-card class="perms-card" id="api-perms-card" header="接口权限">
                 <el-scrollbar-fix :vertical="true">
                   <el-tree
                       :ref="apiPermTreeRef"
@@ -182,8 +183,6 @@ export default {
       const assignedTopMenus = this.menuPerms.filter(perm => perm.parentMenuValue === null).map(perm => perm.value)
       this.menuBtnTreeDefaultExpandedKeys = [...this.btnPerms.map(perm => perm.value), ...assignedTopMenus]
       this.menuBtnTreeDefaultCheckedKeys = [...this.menuBtnPermSet]
-
-      console.log(JSON.stringify(this.menuBtnTreeDefaultCheckedKeys))
     },
 
     async loadApiPermTreeData() {
@@ -212,10 +211,16 @@ export default {
 }
 
 .pan-item {
-  float: left;
-  z-index: 1;
-  width: 150px;
-  height: 150px;
+  @media screen and (min-width: 1200px) {
+    float: left;
+    z-index: 1;
+  }
+  @media screen and (max-width: 1200px) {
+    display: block;
+    margin-left: calc(50% - 7.5rem);
+  }
+  width: 15rem;
+  height: 15rem;
   border-radius: 50%;
   display: inline-block;
   position: relative;
@@ -251,37 +256,69 @@ export default {
   }
 }
 
-.pan-info-roles {
-  font-size: 12px;
-  font-weight: 700;
-  color: #333;
-  display: block;
-}
-
 $infoContainerHeight: 100px;
 $cardBodyDefaultPadding: 20px;
 
-.info-container {
-  position: relative;
-  margin-left: 190px;
-  height: $infoContainerHeight;
-
-  .user-info {
-    font-size: 40px;
+.user-info {
+  @media screen and (min-width: 1200px) {
+    margin-left: 4rem;
+    font-size: 4rem;
     line-height: $infoContainerHeight;
-    color: #212121;
+  }
+  @media screen and (max-width: 1200px) {
+    display: block;
+    font-size: 3rem;
+    text-align: center;
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+    line-height: 3rem;
+  }
+  color: #212121;
+}
 
-    .el-tag {
-      margin-right: 5px;
-    }
+.user-roles {
+  @media screen and (min-width: 1200px) {
+    display: inline;
+  }
+  @media screen and (max-width: 1200px) {
+    margin-bottom: 20px;
+    width: 100%;
+    display: flex;
+    display: -webkit-flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
   }
 
+  .el-tag {
+    margin-right: 5px;
+  }
+}
+
+.perm-info {
+  @media screen and (min-width: 1200px) {
+    margin-left: 19rem;
+  }
+  @media screen and (max-width: 1200px) {
+    margin-top: 1rem;
+    margin-left: .8rem;
+    font-size: 2.5rem;
+  }
+  position: relative;
+  height: $infoContainerHeight;
 }
 
 $outerCardBoxPaddingTop: 20px;
 $outerCardBoxPaddingBottom: 20px;
 .outer-card-box {
-  padding: $outerCardBoxPaddingTop 0 $outerCardBoxPaddingBottom 20px;
+  @media screen and (min-width: 1200px) {
+    padding: $outerCardBoxPaddingTop 0 $outerCardBoxPaddingBottom 20px;
+  }
+  @media screen and (max-width: 1200px) {
+    padding: $outerCardBoxPaddingTop 0 $outerCardBoxPaddingBottom;
+  }
 }
 
 $permsCardHeaderHeight: 60px;
@@ -307,9 +344,19 @@ $heightExceptScrollBarInContainer: 4px + $navBarHeight + 2*$appContainerPadding 
 
 ::v-deep {
   .el-scrollbar {
-    height: calc(100vh - #{$heightExceptScrollBarInContainer});
-    .el-scrollbar__wrap {
+    @media screen and (min-width: 1200px) {
       height: calc(100vh - #{$heightExceptScrollBarInContainer});
+    }
+    @media screen and (max-width: 1200px) {
+      height: 100%;
+    }
+    .el-scrollbar__wrap {
+      @media screen and (min-width: 1200px) {
+        height: calc(100vh - #{$heightExceptScrollBarInContainer});
+      }
+      @media screen and (max-width: 1200px) {
+        height: 100%;
+      }
       margin-bottom: 10px;
       padding-right: 15px;
     }
@@ -322,30 +369,71 @@ $heightExceptScrollBarInContainer: 4px + $navBarHeight + 2*$appContainerPadding 
 
 .hasTagsView {
   .el-scrollbar {
-    height: calc(100vh - #{$heightExceptScrollBarInContainer + $tagsViewHeight});
-    ::v-deep .el-scrollbar__wrap {
+    @media screen and (min-width: 1200px) {
       height: calc(100vh - #{$heightExceptScrollBarInContainer + $tagsViewHeight});
+    }
+    @media screen and (max-width: 1200px) {
+      height: 100%;
+    }
+    ::v-deep .el-scrollbar__wrap {
+      @media screen and (min-width: 1200px) {
+        height: calc(100vh - #{$heightExceptScrollBarInContainer + $tagsViewHeight});
+      }
+      @media screen and (max-width: 1200px) {
+        height: 100%;
+      }
     }
   }
 }
 
 .hasPageFooter {
   .el-scrollbar {
-    height: calc(100vh - #{$heightExceptScrollBarInContainer + 0.5*$pageFooterHeight});
-    ::v-deep .el-scrollbar__wrap {
+    @media screen and (min-width: 1200px) {
       height: calc(100vh - #{$heightExceptScrollBarInContainer + 0.5*$pageFooterHeight});
+    }
+    @media screen and (max-width: 1200px) {
+      height: 100%;
+    }
+    ::v-deep .el-scrollbar__wrap {
+      @media screen and (min-width: 1200px) {
+        height: calc(100vh - #{$heightExceptScrollBarInContainer + 0.5*$pageFooterHeight});
+      }
+      @media screen and (max-width: 1200px) {
+        height: 100%;
+      }
     }
   }
 }
 
 .hasTagsView.hasPageFooter {
   .el-scrollbar {
-    height: calc(100vh - #{$heightExceptScrollBarInContainer + $tagsViewHeight + 0.5*$pageFooterHeight});
-    ::v-deep .el-scrollbar__wrap {
+    @media screen and (min-width: 1200px) {
       height: calc(100vh - #{$heightExceptScrollBarInContainer + $tagsViewHeight + 0.5*$pageFooterHeight});
+    }
+    @media screen and (max-width: 1200px) {
+      height: 100%;
+    }
+    ::v-deep .el-scrollbar__wrap {
+      @media screen and (min-width: 1200px) {
+        height: calc(100vh - #{$heightExceptScrollBarInContainer + $tagsViewHeight + 0.5*$pageFooterHeight});
+      }
+      @media screen and (max-width: 1200px) {
+        height: 100%;
+      }
     }
   }
 }
+
+@media screen and (max-width: 1200px) {
+  #api-perms-card {
+    margin-top: 20px;
+  }
+  ::v-deep .el-col {
+    padding-left: 0!important;
+    padding-right: 8px!important;
+  }
+}
+
 
 .custom-tree-node {
   flex: 1;

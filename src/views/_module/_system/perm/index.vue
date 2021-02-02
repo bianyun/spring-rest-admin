@@ -3,7 +3,7 @@
     <el-row :gutter="20">
 
       <!--菜单按钮权限树-->
-      <el-col :span="14">
+      <el-col :span="14" :xs="24">
         <el-card class="box-card">
           <div slot="header">
             <div class="title-box">
@@ -73,7 +73,7 @@
       </el-col>
 
       <!--接口权限树-->
-      <el-col :span="10">
+      <el-col :span="10" :xs="24" class="api-card">
         <el-card class="box-card">
           <div slot="header">
             <div class="title-box">
@@ -122,9 +122,9 @@
     </el-row>
 
     <!--弹窗：新增或编辑按钮权限-->
-    <el-dialog :width="buttonDialogWidthRatioMap[showApiPermValuesInBtnDialog]" :title="btnPermDialogTitle"
+    <el-dialog :width="buttonDialogWidth()" :title="btnPermDialogTitle" :top="buttonDialogMarginTop()"
                :visible.sync="showBtnPermDialog"
-               :close-on-click-modal="false" class="btn-perm-dialog">
+               :close-on-click-modal="false" id="btn-perm-dialog">
       <el-form :rules="btnFormRules" :ref="btnFormRef" :model="btnFormModel" label-width="80px">
         <el-form-item label="权限名" prop="name">
           <el-input :clearable="true" v-model="btnFormModel.name" placeholder="按钮权限的中文描述，例如：添加用户"></el-input>
@@ -171,7 +171,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" plain style="float: left"
+        <el-button id="showApiPermValueBtn" type="primary" plain style="float: left"
                    @click="onShowApiPermValueBtnClick">{{textOfShowApiPermValueBtn}}</el-button>
         <el-button @click="showBtnPermDialog = false">取消</el-button>
         <el-button type="primary" @click="onButtonDialogConfirm" >确定</el-button>
@@ -179,11 +179,11 @@
     </el-dialog>
 
     <!--弹窗：菜单关联接口权限-->
-    <el-dialog width="28%"
+    <el-dialog :width="menuLinkApiDialogWidth()"
                :visible.sync="showMenuLinkApiDialog"
-               :close-on-click-modal="true" class="menu-link-api-dialog">
+               :close-on-click-modal="true" id="menu-link-api-dialog">
       <template slot="title">
-        <span>{{menuLinkApiDialogTitle}}
+        <span class="el-dialog__title">{{menuLinkApiDialogTitle}}
           <el-tag size="mini">
             <span style="font-size: x-small; font-weight: normal">已选 {{checkedCountOfMenuLinkApiTree}} 项</span>
           </el-tag></span>
@@ -360,6 +360,16 @@ export default {
   },
 
   methods: {
+    buttonDialogWidth() {
+      return window.innerWidth > 1200 ? this.buttonDialogWidthRatioMap[this.showApiPermValuesInBtnDialog] : '95%'
+    },
+    buttonDialogMarginTop() {
+      return window.innerWidth > 1200 ? '12vh' : '4vh'
+    },
+    menuLinkApiDialogWidth() {
+      return window.innerWidth > 1200 ? '28%' : '95%'
+    },
+
     async loadApiPermTreeData() {
       const { apiPermTreeData, unsyncedApiPermValues } = await permApi.fetchApiPermMetaData()
       this.apiPermTreeData = apiPermTreeData
@@ -628,7 +638,6 @@ export default {
      * 删除按钮权限
      */
     onBtnPermDeleteBtnClick(data) {
-      console.log(JSON.stringify(data))
       this.$confirm(`您确定要永久删除该按钮权限【${data.name}】吗？`, '提示')
         .then(() => {
           permApi.deleteButtonPermById(data.id).then(() => {
@@ -730,7 +739,12 @@ $heightExceptScrollBarInContainer: 4px + $navBarHeight + 2*$appContainerPadding 
 
 ::v-deep {
   .el-card__header {
-    height: $cardHeaderHeight;
+    @media screen and (min-width: 1200px) {
+      height: $cardHeaderHeight;
+    }
+    @media screen and (max-width: 1200px) {
+      height: $cardHeaderHeight + 25px;
+    }
     padding-bottom: 15px;
   }
 
@@ -739,9 +753,20 @@ $heightExceptScrollBarInContainer: 4px + $navBarHeight + 2*$appContainerPadding 
   }
 
   .el-scrollbar {
-    height: calc(100vh - #{$heightExceptScrollBarInContainer});
-    .el-scrollbar__wrap {
+    @media screen and (min-width: 1200px) {
       height: calc(100vh - #{$heightExceptScrollBarInContainer});
+    }
+    @media screen and (max-width: 1200px) {
+      height: 100%;
+    }
+    .el-scrollbar__wrap {
+      @media screen and (min-width: 1200px) {
+        height: calc(100vh - #{$heightExceptScrollBarInContainer});
+      }
+      @media screen and (max-width: 1200px) {
+        height: 100%;
+        margin-right: -15px!important;
+      }
       margin-bottom: 10px;
       padding-right: 15px;
     }
@@ -754,27 +779,60 @@ $heightExceptScrollBarInContainer: 4px + $navBarHeight + 2*$appContainerPadding 
 
 .hasTagsView {
   .el-scrollbar {
-    height: calc(100vh - #{$heightExceptScrollBarInContainer + $tagsViewHeight});
-    ::v-deep .el-scrollbar__wrap {
+    @media screen and (min-width: 1200px) {
       height: calc(100vh - #{$heightExceptScrollBarInContainer + $tagsViewHeight});
+    }
+    @media screen and (max-width: 1200px) {
+      height: 100%;
+    }
+    ::v-deep .el-scrollbar__wrap {
+      @media screen and (min-width: 1200px) {
+        height: calc(100vh - #{$heightExceptScrollBarInContainer + $tagsViewHeight});
+      }
+      @media screen and (max-width: 1200px) {
+        height: 100%;
+        margin-right: -15px!important;
+      }
     }
   }
 }
 
 .hasPageFooter {
   .el-scrollbar {
-    height: calc(100vh - #{$heightExceptScrollBarInContainer + 0.5*$pageFooterHeight});
-    ::v-deep .el-scrollbar__wrap {
+    @media screen and (min-width: 1200px) {
       height: calc(100vh - #{$heightExceptScrollBarInContainer + 0.5*$pageFooterHeight});
+    }
+    @media screen and (max-width: 1200px) {
+      height: 100%;
+    }
+    ::v-deep .el-scrollbar__wrap {
+      @media screen and (min-width: 1200px) {
+        height: calc(100vh - #{$heightExceptScrollBarInContainer + 0.5*$pageFooterHeight});
+      }
+      @media screen and (max-width: 1200px) {
+        height: 100%;
+        margin-right: -15px!important;
+      }
     }
   }
 }
 
 .hasTagsView.hasPageFooter {
   .el-scrollbar {
-    height: calc(100vh - #{$heightExceptScrollBarInContainer + $tagsViewHeight + 0.5*$pageFooterHeight});
-    ::v-deep .el-scrollbar__wrap {
+    @media screen and (min-width: 1200px) {
       height: calc(100vh - #{$heightExceptScrollBarInContainer + $tagsViewHeight + 0.5*$pageFooterHeight});
+    }
+    @media screen and (max-width: 1200px) {
+      height: 100%;
+    }
+    ::v-deep .el-scrollbar__wrap {
+      @media screen and (min-width: 1200px) {
+        height: calc(100vh - #{$heightExceptScrollBarInContainer + $tagsViewHeight + 0.5*$pageFooterHeight});
+      }
+      @media screen and (max-width: 1200px) {
+        height: 100%;
+        margin-right: -18px!important;
+      }
     }
   }
 }
@@ -792,8 +850,14 @@ $heightExceptScrollBarInContainer: 4px + $navBarHeight + 2*$appContainerPadding 
     margin-left: 2px;
   }
 
+
   .node-link-num {
-    margin-left: 5px;
+    @media screen and (min-width: 1200px) {
+      margin-left: 5px;
+    }
+    @media screen and (max-width: 1200px) {
+      display: none;
+    }
   }
 
   .node-label {
@@ -834,29 +898,37 @@ $heightExceptScrollBarInContainer: 4px + $navBarHeight + 2*$appContainerPadding 
   }
 }
 
-
-
 .required-label::before {
   content: "*";
   color: #f04444;
   margin-right: 4px;
 }
 
-.menu-link-api-dialog {
+#menu-link-api-dialog {
   ::v-deep .el-dialog__body {
     padding: 10px;
   }
 
   .el-scrollbar {
-    height: 340px;
-    ::v-deep .el-scrollbar__wrap {
+    @media screen and (min-width: 1200px) {
       height: 340px;
+    }
+    @media screen and (max-width: 1200px) {
+      height: 100%;
+    }
+    ::v-deep .el-scrollbar__wrap {
+      @media screen and (min-width: 1200px) {
+        height: 340px;
+      }
+      @media screen and (max-width: 1200px) {
+        height: 100%;
+      }
       margin-bottom: 10px;
     }
   }
 }
 
-.btn-perm-dialog {
+#btn-perm-dialog {
   .input-parent-menu {
     margin-bottom: 15px;
   }
@@ -866,9 +938,19 @@ $heightExceptScrollBarInContainer: 4px + $navBarHeight + 2*$appContainerPadding 
   }
 
   .el-scrollbar {
-    height: 210px;
-    ::v-deep .el-scrollbar__wrap {
+    @media screen and (min-width: 1200px) {
       height: 210px;
+    }
+    @media screen and (max-width: 1200px) {
+      height: 345px;
+    }
+    ::v-deep .el-scrollbar__wrap {
+      @media screen and (min-width: 1200px) {
+        height: 210px;
+      }
+      @media screen and (max-width: 1200px) {
+        height: 345px;
+      }
     }
   }
 }
@@ -885,5 +967,22 @@ $heightExceptScrollBarInContainer: 4px + $navBarHeight + 2*$appContainerPadding 
 ::v-deep .el-input.el-input-group .el-input__inner {
   padding-left: 6px;
 }
+
+@media screen and (max-width: 1200px) {
+  .node-value.perm-value {
+    display: none;
+  }
+  .app-container {
+    padding-bottom: 0;
+  }
+  .api-card {
+    margin-top: 20px;
+  }
+
+  #showApiPermValueBtn.el-button {
+    display: none;
+  }
+}
+
 
 </style>

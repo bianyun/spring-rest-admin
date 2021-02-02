@@ -36,6 +36,7 @@ module.exports = {
       warnings: false,
       errors: true
     },
+    disableHostCheck: true,
     // before: require('./mock/mock-server.js')
   },
   configureWebpack: {
@@ -48,38 +49,6 @@ module.exports = {
       }
     }
   },
-
-  // configureWebpack: config => {
-  //   if (process.env.NODE_ENV === 'production') {
-  //     return {
-  //       name: name,
-  //       resolve: {
-  //         alias: {
-  //           '@': resolve('src')
-  //         }
-  //       },
-  //       plugins: [
-  //         new CompressionWebpackPlugin({
-  //           // filename: '[path].gz[query]',
-  //           // algorithm: 'gzip',
-  //           test: new RegExp('\\.(' + productionGzipExtensions.join('|') + ')$'),
-  //           // threshold: 10240,
-  //           // minRatio: 0.8,
-  //           deleteOriginalAssets: true
-  //         })
-  //       ]
-  //     }
-  //   } else {
-  //     return {
-  //       name: name,
-  //       resolve: {
-  //         alias: {
-  //           '@': resolve('src')
-  //         }
-  //       },
-  //     }
-  //   }
-  // },
 
   chainWebpack(config) {
     // it can improve the speed of the first screen, it is recommended to turn on preload

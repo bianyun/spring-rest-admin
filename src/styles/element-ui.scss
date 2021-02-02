@@ -121,4 +121,9 @@
   padding-right: 14px!important;
 }
 
+@media screen and (max-width: 1200px) {
+  .el-pagination__jump {
+    display: none!important;
+  }
+}
 

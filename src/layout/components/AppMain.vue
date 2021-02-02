@@ -30,6 +30,9 @@ export default {
   width: 100%;
   position: relative;
   overflow: hidden;
+  @media screen and (max-width: 1200px) {
+    padding-bottom: $pageFooterHeight;
+  }
 }
 
 .fixed-header+.app-main {

@@ -51,7 +51,6 @@ export default {
       }
     },
     needPageFooter() {
-      console.log(process.env.VUE_APP_FOOTER_INFO_COPYRIGHT || process.env.VUE_APP_FOOTER_INFO_BEIAN)
       return process.env.VUE_APP_FOOTER_INFO_COPYRIGHT || process.env.VUE_APP_FOOTER_INFO_BEIAN
     },
   },
