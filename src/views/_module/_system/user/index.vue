@@ -31,11 +31,11 @@
       fit
       highlight-current-row>
       <el-table-column v-if="showSelectionColumn" type="selection" width="50" align="center"></el-table-column>
-      <el-table-column prop="sys_user__id" label="ID"></el-table-column>
+      <el-table-column prop="sys_user__id" label="ID" width="50" align="center"></el-table-column>
       <el-table-column label="用户名">
         <template slot-scope="{ row: {sys_user__username: username} }">
           {{username}}
-          <el-tag style="margin-left: 5px" type="danger" size="mini" effect="plain" v-if="demoModeEnabled && demoPreservedUsers.includes(username)">演示用户</el-tag>
+          <el-tag class="demo-users" style="margin-left: 5px" type="danger" size="mini" effect="plain" v-if="demoModeEnabled && demoPreservedUsers.includes(username)">演示用户</el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="sys_user__nickname" label="昵称"></el-table-column>
@@ -75,7 +75,7 @@
     </el-table>
 
     <div v-if="demoModeEnabled" class="demo-mode-tips">
-      <strong>提示</strong>：当前处于 <emphasize>演示模式</emphasize>，不能对内置演示用户进行 <emphasize>修改、删除、启用停用、角色分配</emphasize> 等操作
+      <strong>提示</strong>：当前处于 <em>演示模式</em>，不能对内置演示用户进行 <em>修改、删除、启用停用、角色分配</em> 等操作
     </div>
 
     <pagination v-show="total>0" :total="total" :page.sync="pageQueryParam.pageNumber"
@@ -435,15 +435,29 @@ export default {
   margin-right: 15px;
 }
 
+.demo-users {
+  @media screen and (max-width: 1200px) {
+    display: block;
+    margin-left: 0!important;
+  }
+}
+
 .demo-mode-tips {
-  text-align: right;
-  margin-top: 5px;
+  @media screen and (min-width: 1200px) {
+    text-align: right;
+  }
+  @media screen and (max-width: 1200px) {
+    text-align: left;
+  }
+  margin-top: 10px;
   font-size: 1.3rem;
+  line-height: 1.8rem;
   strong {
     color: #409EFF;
   }
-  emphasize {
+  em {
     color: #f04444;
+    font-style: normal;
   }
 }
 
