@@ -69,13 +69,17 @@ router.beforeEach(async (to, from, next) => {
     }
   } else {
     /* has no token*/
-
     if (whiteList.indexOf(to.path) !== -1) {
       // in the free login whitelist, go directly
       next()
     } else {
       // other pages that do not have permission to access are redirected to the login page.
-      next(`/login?redirect=${to.path}`)
+      if (to.path !== '/dashboard') {
+        next(`/login?redirect=${to.path}`)
+      } else {
+        next('/login')
+      }
+
       NProgress.done()
     }
   }

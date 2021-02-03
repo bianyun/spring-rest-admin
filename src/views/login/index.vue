@@ -1,5 +1,5 @@
 <template>
-  <div class="login-container" :class="{hasPageFooter:needPageFooter}">
+  <div class="login-container">
     <el-form ref="loginForm" :model="loginForm" :rules="rules" class="login-form" autocomplete="on" label-position="left">
 
       <div class="title-container">
@@ -91,7 +91,6 @@
 <script>
 // import SocialSign from './components/SocialSignin'
 import { PageFooter } from '@/layout/components'
-import { needPageFooter } from '@/utils/helper'
 
 export default {
   name: 'Login',
@@ -139,9 +138,6 @@ export default {
   created() {
     // window.addEventListener('storage', this.afterQRScan)
   },
-  computed: {
-    needPageFooter,
-  },
   mounted() {
     // if (this.loginForm.username === '') {
     //   this.$refs.username.focus()
@@ -176,8 +172,7 @@ export default {
         this.loading = true
         this.$store.dispatch('user/login', this.loginForm)
           .then(() => {
-            this.$router.push({ path: this.redirect || '/', query: this.otherQuery }).catch(() => {
-            })
+            this.$router.push({ path: this.redirect || '/', query: this.otherQuery }).catch(() => {})
             this.loading = false
           })
           .catch(() => {
@@ -281,10 +276,6 @@ $cursor: #fff;
 $bg:#2d3a4b;
 $dark_gray:#889aa4;
 $light_gray:#eee;
-
-.login-container.hasPageFooter {
-  min-height: calc(100vh - #{$pageFooterHeight});
-}
 
 .login-container {
   min-height: 100vh;

@@ -70,7 +70,7 @@ import Screenfull from '@/components/Screenfull'
 import SizeSelect from '@/components/SizeSelect'
 import Search from '@/components/HeaderSearch'
 import userApi from '@/api/_system/user'
-import { resolveDialogMarginTop, resolveDialogWidth } from '@/utils/core'
+import { resolveDialogMarginTop, resolveDialogWidth } from '@/utils/helper'
 
 export default {
   components: {

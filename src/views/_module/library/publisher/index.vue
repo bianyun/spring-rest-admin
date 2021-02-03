@@ -108,7 +108,6 @@ export default {
   components: { Pagination },
   mixins: [baseMixin],
   data() {
-    // const pageSizes = [7, 10, 20, 30, 50, 100]
     const initTempModel = {
       id: null,
       name: '',
