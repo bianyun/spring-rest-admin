@@ -22,7 +22,7 @@
 <!--          @keyup.enter.native="handleLogin"-->
 <!--        />-->
         <el-select ref="username" v-model="loginForm.username" filterable @blur="selectBlur"
-                   :clearable="true" placeholder="请选择内置用户 或 输入新的用户名">
+                   :clearable="true" placeholder="请选择内置演示用户 或 输入新的用户名">
           <el-option
             v-for="item in usernameOptions"
             :key="item.value"

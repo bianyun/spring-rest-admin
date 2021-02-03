@@ -32,6 +32,7 @@
       fit
       highlight-current-row>
       <el-table-column v-if="showSelectionColumn" type="selection" width="50" align="center"></el-table-column>
+      <el-table-column prop="sys_role__id" label="ID"></el-table-column>
       <el-table-column prop="sys_role__name" label="角色名"></el-table-column>
       <el-table-column prop="sys_role__description" label="角色描述"></el-table-column>
       <el-table-column prop="sys_role__value" label="角色值"></el-table-column>

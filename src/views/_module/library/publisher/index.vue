@@ -33,6 +33,7 @@
       fit
       highlight-current-row>
       <el-table-column v-if="showSelectionColumn" type="selection" width="50" align="center"></el-table-column>
+      <el-table-column prop="lib_publisher__id" label="ID"></el-table-column>
       <el-table-column prop="lib_publisher__name" label="名称"></el-table-column>
       <el-table-column prop="lib_publisher__address" label="地址"></el-table-column>
       <el-table-column prop="lib_publisher__zip_code" label="邮编" align="center"></el-table-column>

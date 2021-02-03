@@ -31,7 +31,13 @@
       fit
       highlight-current-row>
       <el-table-column v-if="showSelectionColumn" type="selection" width="50" align="center"></el-table-column>
-      <el-table-column prop="sys_user__username" label="用户名"></el-table-column>
+      <el-table-column prop="sys_user__id" label="ID"></el-table-column>
+      <el-table-column label="用户名">
+        <template slot-scope="{ row: {sys_user__username: username} }">
+          {{username}}
+          <el-tag style="margin-left: 5px" type="danger" size="mini" effect="plain" v-if="demoModeEnabled && demoPreservedUsers.includes(username)">演示用户</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column prop="sys_user__nickname" label="昵称"></el-table-column>
       <el-table-column prop="sys_user__realname" label="姓名"></el-table-column>
       <el-table-column prop="sys_user__email" label="Email"></el-table-column>
@@ -67,6 +73,11 @@
         </template>
       </el-table-column>
     </el-table>
+
+    <div v-if="demoModeEnabled" class="demo-mode-tips">
+      <strong>提示</strong>：当前处于 <emphasize>演示模式</emphasize>，不能对内置演示用户进行 <emphasize>修改、删除、启用停用、角色分配</emphasize> 等操作
+    </div>
+
     <pagination v-show="total>0" :total="total" :page.sync="pageQueryParam.pageNumber"
                 :page-sizes="pageSizes" :limit.sync="pageQueryParam.pageSize" @pagination="onPagination" />
 
@@ -169,6 +180,7 @@ import baseMixin from '@/views/_module/_mixins/base-mixin'
 import { SysPerms } from '@/utils/enums/perms/system'
 import { hasPerm, isCurrentUser } from '@/utils/permission'
 import rules from 'element-ui-validation'
+import { mapGetters } from 'vuex'
 
 export default {
   username: 'SystemUserManage',
@@ -207,6 +219,7 @@ export default {
       ...MenuType,
       ...SysPerms,
       ...DialogStatus,
+
 
       showAssignRoleDialog: false,
       dataFormRef: 'dataFormRef',
@@ -260,6 +273,10 @@ export default {
     showSelectionColumn() {
       return hasPerm(this.button_sys_user_batch_delete)
     },
+    ...mapGetters([
+      'demoModeEnabled',
+      'demoPreservedUsers'
+    ])
   },
   created() {
     this.fetchTableData()
@@ -394,6 +411,8 @@ export default {
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
+@import "~@/styles/variables.scss";
+
 .custom-tree-node {
   flex: 1;
   display: flex;
@@ -416,6 +435,17 @@ export default {
   margin-right: 15px;
 }
 
+.demo-mode-tips {
+  text-align: right;
+  margin-top: 5px;
+  font-size: 1.3rem;
+  strong {
+    color: #409EFF;
+  }
+  emphasize {
+    color: #f04444;
+  }
+}
 
 ::v-deep .el-scrollbar__wrap {
   overflow-x: hidden !important;

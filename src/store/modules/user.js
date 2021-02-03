@@ -20,6 +20,8 @@ const state = {
   roleNameSet: new Set(),
   roleValueSet: new Set(),
   menuBtnPermSet: new Set(),
+  demoModeEnabled: false,
+  demoPreservedUsers: [],
 }
 
 const mutations = {
@@ -65,6 +67,12 @@ const mutations = {
   SET_MENU_BUTTON_PERM_SET: (state, menuBtnPermSet) => {
     state.menuBtnPermSet = menuBtnPermSet
   },
+  SET_DEMO_MODE_ENABLED: (state, demoModeEnabled) => {
+    state.demoModeEnabled = demoModeEnabled
+  },
+  SET_DEMO_PRESERVED_USERS: (state, demoPreservedUsers) => {
+    state.demoPreservedUsers = demoPreservedUsers
+  },
 }
 
 const actions = {
@@ -96,9 +104,11 @@ const actions = {
             reject('获取用户资料出错')
           }
 
-          const { user, roles, menuPerms, btnPerms, apiPerms } = response
+          const { user, roles, menuPerms, btnPerms, apiPerms, demoModeEnabled, demoPreservedUsers } = response
           const { id, username, realname, nickname, pictureUrl } = user
           commit('SET_ROLES', roles)
+          commit('SET_DEMO_MODE_ENABLED', demoModeEnabled)
+          commit('SET_DEMO_PRESERVED_USERS', demoPreservedUsers)
 
           if (!roles.some(role => role.value === ROLE_SUPERADMIN)) {
             commit('SET_MENU_PERMS', menuPerms)

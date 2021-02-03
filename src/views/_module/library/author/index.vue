@@ -31,6 +31,7 @@
       fit
       highlight-current-row>
       <el-table-column v-if="showSelectionColumn" type="selection" width="50" align="center"></el-table-column>
+      <el-table-column prop="lib_author__id" label="ID"></el-table-column>
       <el-table-column prop="lib_author__name" label="姓名"></el-table-column>
       <el-table-column prop="lib_author__gender" :formatter="jooqEnumValueFormatter"
                        label="性别" align="center"></el-table-column>
