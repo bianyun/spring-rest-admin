@@ -1,7 +1,7 @@
 <template>
   <el-card style="margin-bottom:20px;">
     <div slot="header" class="clearfix">
-      <span>关于我</span>
+      <span style="font-size: 1.6rem">About me</span>
     </div>
 
     <div class="user-profile">

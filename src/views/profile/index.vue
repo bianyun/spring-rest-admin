@@ -73,12 +73,17 @@ export default {
 <style lang="scss" scoped>
 #main-card.el-card {
   ::v-deep .el-card__body {
-    padding-top: 10px;
+    padding-top: 15px;
     padding-bottom: 5px;
   }
 }
 
 .hasPageFooter #main-card.el-card {
-  margin-bottom: 25px;
+  @media screen and (min-width: 1200px) {
+    margin-bottom: 25px;
+  }
+  @media screen and (max-width: 1200px) {
+    margin-bottom: -20px;
+  }
 }
 </style>
