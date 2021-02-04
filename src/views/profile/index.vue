@@ -8,7 +8,7 @@
         </el-col>
 
         <el-col :span="18" :xs="24">
-          <el-card>
+          <el-card id="main-card">
             <el-tabs v-model="activeTab">
               <el-tab-pane label="Activity" name="activity">
                 <activity />
@@ -22,7 +22,6 @@
             </el-tabs>
           </el-card>
         </el-col>
-
       </el-row>
     </div>
   </div>
@@ -70,3 +69,16 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+#main-card.el-card {
+  ::v-deep .el-card__body {
+    padding-top: 10px;
+    padding-bottom: 5px;
+  }
+}
+
+.hasPageFooter #main-card.el-card {
+  margin-bottom: 25px;
+}
+</style>

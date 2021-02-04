@@ -1,7 +1,7 @@
 <template>
   <el-card style="margin-bottom:20px;">
     <div slot="header" class="clearfix">
-      <span>About me</span>
+      <span>关于我</span>
     </div>
 
     <div class="user-profile">
@@ -87,6 +87,7 @@ export default {
 
 .user-profile {
   .user-name {
+    font-size: 1.5rem;
     font-weight: bold;
   }
 
