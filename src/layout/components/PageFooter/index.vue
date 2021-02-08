@@ -1,21 +1,31 @@
 <template>
-  <div class="footer">
-    <span v-if="copyRightAvailable" style="margin-right: 1rem">&copy; {{yearInfo}} <a :href="copyrightLink">{{copyrightLabel}}</a></span>
-    <a v-if="beianInfo" href="https://beian.miit.gov.cn/" target="_blank">{{beianInfo}}</a>
+  <div class="footer" v-if="showFooter">
+    <span v-if="copyRightAvailable" class="copyright">&copy; {{yearInfo}} <a :href="copyrightLink">{{copyrightLabel}}</a></span>
+    <a v-if="policeBeianInfo" class="police-beian"
+       :href="`http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=${policeBeianNo}`" target="_blank">
+      <img :src="policeBeianIcon" height="13" width="13" alt="police_beian_icon">
+      {{policeBeianInfo}}
+    </a>
+    <a v-if="icpBeianInfo" class="icp-beian" href="https://beian.miit.gov.cn/" target="_blank">{{icpBeianInfo}}</a>
   </div>
 </template>
 
 <script>
+import policeBeianIcon from '@/assets/image/police-beian-icon.png'
 
 export default {
   data() {
     return  {
+      policeBeianIcon,
+      docmHeight: 0,
+      showFooter: true,
       copyrightParamRegex: "(\\d{4})\\s+(https?://[a-zA-Z.-0-9]+)\\s+(\\S+)",
       startYear: null,
       thisYear: new Date().getFullYear(),
       yearInfo: null,
       copyrightLink: null,
       copyrightLabel: null,
+      policeBeianInfoRegex: "[^\\d]+(\\d+)[^\\d]+",
     }
   },
   created() {
@@ -31,13 +41,33 @@ export default {
       }
     }
   },
+  mounted() {
+    this.docmHeight = document.documentElement.clientHeight;
+    window.onresize = () => {
+      return (() => {
+        let showHeight = document.body.clientHeight;
+        this.showFooter = this.docmHeight <= showHeight;
+      })();
+    };
+  },
   computed: {
     copyRightAvailable() {
       return process.env.VUE_APP_FOOTER_INFO_COPYRIGHT &&
           process.env.VUE_APP_FOOTER_INFO_COPYRIGHT.match(this.copyrightParamRegex)
     },
-    beianInfo() {
-      return process.env.VUE_APP_FOOTER_INFO_BEIAN
+    icpBeianInfo() {
+      return process.env.VUE_APP_FOOTER_INFO_ICP_BEIAN
+    },
+    policeBeianInfo() {
+      return process.env.VUE_APP_FOOTER_INFO_POLICE_BEIAN
+    },
+    policeBeianNo() {
+      if (this.policeBeianInfo) {
+        const result = this.policeBeianInfo.match(this.policeBeianInfoRegex)
+        return result[1]
+      } else {
+        return null
+      }
     },
   },
 
@@ -55,10 +85,30 @@ export default {
   width: 100%;
   bottom: 1.5rem;
   font-size: 1.2rem;
-  letter-spacing: 1px;
+  letter-spacing: .2px;
 
   a:hover {
     color: #409EFF;
+  }
+
+  .copyright {
+    margin-right: 1rem;
+
+    @media screen and (max-width: 1200px) {
+      display: block;
+      margin-bottom: 5px;
+    }
+  }
+
+  .icp-beian {
+    margin-left: 10px;
+  }
+
+  .police-beian {
+    margin-left: 5px;
+    img {
+      margin-bottom: -1px;
+    }
   }
 }
 </style>

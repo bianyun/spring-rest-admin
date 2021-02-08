@@ -68,7 +68,7 @@ $ cd spring-rest-admin
 $ npm install
 ```
 
-**注意：** 如果在执行 npm install 命令时有报错，且错误信息是 `npm ERR! Failed at the chromedriver@2.46.0 install script.` ，那么可以执行下面的命令后再执行 `npm install` ：
+**注意：** 如果在执行 `npm install` 命令时有报错，且错误信息是 `npm ERR! Failed at the chromedriver@2.46.0 install script.` ，那么可以执行下面的命令后再执行 `npm install` ：
 
 ```bash
 $ npm install chromedriver --chromedriver_cdnurl=http://cdn.npm.taobao.org/dist/chromedriver
@@ -81,17 +81,17 @@ $ npm config set proxy http://username:password@host:port
 $ npm config set https-proxy http://username:password@host:port
 ```
 
-如果 npm install 执行成功，没有报错的话，就可以继续运行
+如果 `npm install` 执行成功，没有报错的话，就可以继续运行
 
 ```bash
 $ npm run serve
 ```
 
-稍等片刻后，会自动打开浏览器，并跳转到地址 `http://localhost:9527/login?redirect=%2Fdashboard`，选择一个内置用户即可直接登录。
+稍等片刻后，会自动打开浏览器，并跳转到地址 `http://localhost:9527/login`，选择一个内置用户即可直接登录。
 
 ![](https://cdn.jsdelivr.net/gh/bianyun1981/CDN@latest/img/readme/2021-02/2021-02-01-160437-581.png)
 
-**注意：**服务端后台要先启动才能登录成功。
+**注意：** 服务端后台要先启动才能登录成功。
 
 ![](https://cdn.jsdelivr.net/gh/bianyun1981/CDN@latest/img/readme/2021-02/2021-02-01-161355-195.png)
 
@@ -107,7 +107,7 @@ vue-element-admin 支持多环境配置，环境配置文件名格式为 `.env.[
 
 ### 打包部署
 
-**注意：** 打包前请确认 npm install 和 npm run serve 都能正常执行不报错。
+**注意：** 打包前请确认 `npm install` 和 `npm run serve` 都能正常执行不报错。
 
 打包命令为： `npm run build -- --mode <环境名>`，以上图为例，打包命令为：
 
@@ -117,9 +117,9 @@ $ npm run build -- --mode vm-centos7
 
 命令成功执行结束后，dist 目录下即为打包结果文件。
 
-**注意：** 代码压缩插件 compression-webpack-plugin 只能使用上一个版本 v6，不能使用最新的 v7 版本，否则好像会报错。
+**注意：** 代码压缩插件 `compression-webpack-plugin` 只能使用上一个版本 v6，不能使用最新的 v7 版本，否则好像会报错。
 
-另外，本项目的路由模式配置为 history 模式，如果希望以此模式运行，需要 nginx也要做相应配置（详细说明见 [使用 `history.pushState` 的路由](https://cli.vuejs.org/zh/guide/deployment.html#%E4%BD%BF%E7%94%A8-history-pushstate-%E7%9A%84%E8%B7%AF%E7%94%B1) ）。同时，还要加上 gzip 相关配置（只需要这一行配置即可）：
+另外，本项目的路由模式配置为 history 模式，如果希望以此模式运行，需要 nginx 也要做相应配置（详细说明见 [使用 `history.pushState` 的路由](https://cli.vuejs.org/zh/guide/deployment.html#%E4%BD%BF%E7%94%A8-history-pushstate-%E7%9A%84%E8%B7%AF%E7%94%B1) ）。同时，还要加上 gzip 相关配置（只需要这一行配置即可）：
 
 ```nginx
 location / {
