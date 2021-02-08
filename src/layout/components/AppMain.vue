@@ -31,7 +31,7 @@ export default {
   position: relative;
   overflow: hidden;
   @media screen and (max-width: 1200px) {
-    padding-bottom: $pageFooterHeight;
+    padding-bottom: $pageFooterHeight + 15px;
   }
 }
 
