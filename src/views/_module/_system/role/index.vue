@@ -1,26 +1,15 @@
 <template>
   <div class="app-container">
-    <div class="filter-container">
-      <div style="float: left">
-        <el-input placeholder="角色名" class="filter-item" size="small" v-model="listQuery.roleName"
-                  :clearable="true"></el-input>
-        <el-input placeholder="角色值" class="filter-item" size="small" v-model="listQuery.roleValue"
-                  :clearable="true"></el-input>
-        <el-button type="primary" class="filter-item" size="small" icon="el-icon-search">
-          搜索
-        </el-button>
-      </div>
-    </div>
-    <div class="table-level-buttons">
-      <el-button type="success" class="filter-item" icon="el-icon-plus"
-                 v-if="hasPerm(button_sys_role_add)" size="small" @click="onAddBtnClick">
-        添加
-      </el-button>
-      <el-button type="danger" class="filter-item" icon="el-icon-delete" size="small" @click="onBatchDeleteBtnClick($event)"
-                 v-if="hasPerm(button_sys_role_batch_delete)" :disabled="multipleSelection.length === 0">
-        删除
-      </el-button>
-    </div>
+    <filter-container :no-table-level-buttons="!hasPermAdd && !hasPermBatchDelete"
+                      :flat-table-prfix="flatTablePrefix" :data-query-func="fetchTableData"
+                      :filter-items="filterItems"></filter-container>
+    <table-level-buttons
+        :has-perm-add="hasPermAdd"
+        :has-perm-batch-delete="hasPermBatchDelete"
+        :multiple-selection-array="multipleSelection"
+        :add-btn-click-handler="onAddBtnClick"
+        :batch-delete-btn-click-handler="onBatchDeleteBtnClick">
+    </table-level-buttons>
 
     <el-table
       :ref="tableName"
@@ -31,38 +20,20 @@
       border
       fit
       highlight-current-row>
-      <el-table-column v-if="showSelectionColumn" type="selection" width="50" align="center"></el-table-column>
-      <el-table-column prop="sys_role__id" label="ID" width="50" align="center"></el-table-column>
-      <el-table-column prop="sys_role__name" label="角色名"></el-table-column>
-      <el-table-column prop="sys_role__description" label="角色描述"></el-table-column>
-      <el-table-column prop="sys_role__value" label="角色值"></el-table-column>
-<!--      <el-table-column prop="sys_role__created_time" :formatter="tableColumnDateTimeFormatter"-->
-<!--                       label="创建时间" align="center"></el-table-column>-->
-      <el-table-column prop="sys_role__last_modified_time" :formatter="tableColumnDateTimeFormatter"
-                       label="最后修改时间" align="center"></el-table-column>
-      <el-table-column v-if="showActionColumn" label="操作" align="center" width="200"
-                       class-value="small-padding fixed-width">
-        <template slot-scope="{row}">
-          <el-tooltip :hide-after="600" :enterable="false" content="编辑" placement="top">
-            <el-button @click="onEditBtnClick(row)" size="small" type="primary" icon="el-icon-edit"
-                       v-if="hasPerm(button_sys_role_update)" circle plain></el-button>
-          </el-tooltip>
-          <el-tooltip :hide-after='600' :enterable='false' content='分配权限' placement='top'>
-            <el-button @click='onAssignPermBtnClick(row)' size='small' type='warning'
-                       v-if='hasPerm(button_sys_role_assign_perm)' icon='el-icon-view' circle plain></el-button>
+      <el-table-column v-if="hasPermBatchDelete" type="selection" width="50" align="center"></el-table-column>
+      <el-table-column :prop="mainTableFlatKey('id')" label="ID" min-width="50" align="center"></el-table-column>
+      <el-table-column :prop="mainTableFlatKey('name')" label="角色名" min-width="100" align="center"></el-table-column>
+      <el-table-column :prop="mainTableFlatKey('value')" label="角色值" min-width="100" align="center"></el-table-column>
+      <el-table-column :prop="mainTableFlatKey('description')" label="角色描述" min-width="250"></el-table-column>
+      <el-table-column :prop="mainTableFlatKey('created_time')" label="创建时间" min-width="155" align="center" :formatter="tableColumnDateTimeFormatter"></el-table-column>
+      <el-table-column :prop="mainTableFlatKey('last_modified_time')" label="更新时间" min-width="155" align="center" :formatter="tableColumnDateTimeFormatter"></el-table-column>
 
-          </el-tooltip>
-          <el-tooltip :hide-after="600" :enterable="false" content="删除" placement="top">
-            <el-button @click="onDeleteBtnClick(row, $event)" size="small" type="danger" icon="el-icon-delete"
-                       v-if="hasPerm(button_sys_role_delete)" circle plain></el-button>
-          </el-tooltip>
-        </template>
-      </el-table-column>
+      <table-operation-column :show-action-column="showActionColumn" :operation-items="tableOperationItems" :width="180"></table-operation-column>
     </el-table>
     <pagination v-show="total>0" :total="total" :page.sync="pageQueryParam.pageNumber"
                 :page-sizes="pageSizes" :limit.sync="pageQueryParam.pageSize" @pagination="onPagination" />
 
-    <el-dialog :title="editDialogStatus + '角色'" :visible.sync='showEditDialog' :width="resolveDialogWidth('30%')"
+    <el-dialog :title="editDialogStatus + label" :visible.sync='showEditDialog' :width="resolveDynamicRatioWidth('460px')"
                :top="resolveDialogMarginTop('25vh')" @close='resetDataForm(dataFormRef)' :close-on-click-modal='false'>
       <el-form :rules="rules" :ref="dataFormRef" :model="tempFormModel" label-width="70px">
         <el-form-item label="角色名" prop="name">
@@ -87,7 +58,7 @@
     </el-dialog>
 
     <!-- 弹窗：角色关联菜单按钮权限 -->
-    <el-dialog :width="resolveDialogWidth('30%')" :top="resolveDialogMarginTop('15vh')"
+    <el-dialog :width="resolveDynamicRatioWidth('460px')" :top="resolveDialogMarginTop('15vh')"
                :visible.sync="showAssignPermDialog"
                :close-on-click-modal="true">
       <template slot="title">
@@ -146,21 +117,18 @@
 </template>
 
 <script>
-import roleApi from '@/api/_system/role'
-import Pagination from '@/components/Pagination'
-import { DialogStatus, LowerPermType, MenuType, PermType } from '@/utils/enums'
-import { isEmpty } from 'lodash-es/lang'
+import { roleApi } from '@/api/_system/role'
+import { permApi } from '@/api/_system/perm'
+import { LowerPermType, MenuType, PermType } from '@/utils/enums'
 import treeUtil from '@/views/_module/_system/tree'
-import permApi from '@/api/_system/perm'
-import baseMixin from '@/views/_module/_mixins/base-mixin'
 import { SysPerms } from '@/utils/enums/perms/system'
 import { hasPerm, isCurrentUserHasRole, isCurrentUserSuperAdmin } from '@/utils/permission'
 import rules from 'element-ui-validation'
+import baseListPageMixin from '@/views/_module/_mixins/base-list-page-mixin'
 
 export default {
-  value: 'SystemRoleManage',
-  components: { Pagination },
-  mixins: [baseMixin],
+  name: 'SystemRoleManage',
+  mixins: [baseListPageMixin],
   data() {
     const initTempFormModel = {
       id: null,
@@ -170,9 +138,34 @@ export default {
     }
 
     return {
+      label: '角色',
+      pageId: 'sys_role',
+      confirmLabelColumn: 'name',
+      api: roleApi,
+      pagePerms: SysPerms,
+      initTempFormModel,
+
       ...PermType,
       ...MenuType,
-      ...SysPerms,
+
+      filterItems: [
+        { type: 'input', field: 'name', label: '角色名' },
+        { type: 'input', field: 'value', label: '角色值' },
+        { type: 'date-range', field: 'created_time', label: '创建时间' },
+      ],
+
+      tableOperationItems: [
+        { shape: 'circle', label: '编辑', buttonType: 'primary', icon: 'edit', visibleFunc: () => this.hasPermUpdate, clickHandler: this.onEditBtnClick },
+        { shape: 'circle', label: '分配权限', buttonType: 'warning', icon: 'view', visibleFunc: () => this.hasPermAssignPermsToRole, clickHandler: this.onAssignPermBtnClick },
+        { shape: 'circle', label: '删除', buttonType: 'danger', icon: 'delete', visibleFunc: () => this.hasPermDelete, clickHandler: this.onDeleteBtnClick },
+      ],
+
+      tempFormModel: Object.assign({}, initTempFormModel),
+      rules: {
+        name: rules.string('角色名', 8, 2, 'change'),
+        value: rules.string('角色值', 20, 3, 'change'),
+        description: rules.string('角色值', 100, null, 'change', false),
+      },
 
       showAssignPermDialog: false,
       showMenuBtnTree: false,
@@ -191,51 +184,17 @@ export default {
           return menuType === MenuType.DIR || synced === false
         },
       },
-
-      dataFormRef: 'dataFormRef',
-      tempFormModel: Object.assign({}, initTempFormModel),
-      initTempFormModel,
-
-      tableName: 'dataTable',
-      multipleSelection: [],
-
-      listQuery: {
-        roleName: '',
-        roleValue: '',
-      },
-      total: 0,
-      tableDataLoading: false,
-      tableData: [],
-      showEditDialog: false,
-      editDialogStatus: '',
-      rules: {
-        name: rules.string('角色名', 8, 2, 'change'),
-        value: rules.string('角色值', 20, 3, 'change'),
-        description: rules.string('角色值', 100, null, 'change', false),
-      },
     }
   },
   computed: {
+    hasPermAssignPermsToRole() {
+      return hasPerm(this.pagePerms[`button_${this.pageId}_assign_perm`])
+    },
     showActionColumn() {
-      return hasPerm(this.button_sys_role_assign_perm) ||
-                hasPerm(this.button_sys_role_update) ||
-                hasPerm(this.button_sys_role_delete)
+      return this.hasPermAssignPermsToRole || this.hasPermUpdate || this.hasPermDelete
     },
-    showSelectionColumn() {
-      return hasPerm(this.button_sys_role_batch_delete)
-    },
-  },
-  created() {
-    this.fetchTableData()
   },
   methods: {
-    async fetchTableData() {
-      this.tableDataLoading = true
-      const { list, totalElements } = await roleApi.$pageFlatQuery(this.pageQueryParam)
-      this.tableData = list
-      this.total = totalElements
-      this.tableDataLoading = false
-    },
     async loadMenuBtnPermTree() {
       const menuPermTree = treeUtil.buildMenuPermTree()
       const menuPermMetaData = await permApi.fetchMenuPermMetaData(menuPermTree)
@@ -355,70 +314,6 @@ export default {
       this.checkedCountOfBtnPerm = checkedBtnNodeNum
       this.checkedCountOfMenuBtnPermTree = checkedMenuNodeNum + checkedBtnNodeNum
     },
-
-    onPagination({ page, limit }) {
-      this.pageQueryParam.pageNumber = page
-      this.pageQueryParam.pageSize = limit
-      this.fetchTableData()
-    },
-    onEditDialogConfirm() {
-      this.$refs[this.dataFormRef].validate((valid) => {
-        if (!valid) return false
-
-        if (this.editDialogStatus === DialogStatus.ADD) {
-          roleApi.$create(this.tempFormModel).then(() => {
-            this.fetchTableData()
-            this.showEditDialog = false
-            this.$notify.success('角色添加成功')
-          })
-        } else if (this.editDialogStatus === DialogStatus.EDIT) {
-          roleApi.$update(this.tempFormModel).then(() => {
-            this.fetchTableData()
-            this.showEditDialog = false
-            this.$notify.success('角色更新成功')
-          })
-        }
-      })
-    },
-    resetDataForm() {
-      this.$refs[this.dataFormRef].resetFields()
-      Object.assign(this.tempFormModel, this.initTempFormModel)
-    },
-    handleSelectionChange(val) {
-      this.multipleSelection = val;
-    },
-    onAddBtnClick() {
-      this.editDialogStatus = DialogStatus.ADD
-      Object.assign(this.tempFormModel, this.initTempFormModel)
-      this.showEditDialog = true
-    },
-    async onEditBtnClick(row) {
-      this.tempFormModel = await roleApi.$findById(this.getIdValueOfFlatQueryObj(row))
-      this.editDialogStatus = DialogStatus.EDIT
-      this.showEditDialog = true
-    },
-    onDeleteBtnClick(row, event) {
-      const { sys_role__name: roleName } = row
-      this.$confirm(`您确定要删除角色【${roleName}】？`, '提示').then(() => {
-        roleApi.$deleteById(this.getIdValueOfFlatQueryObj(row)).then(() => {
-          this.fetchTableData()
-          this.$notify.success('角色删除成功')
-        })
-      }).finally(() => this.blurTargetButton(event))
-    },
-    onBatchDeleteBtnClick(event) {
-      if (isEmpty(this.multipleSelection)) {
-        return false
-      }
-      this.$confirm(`您确定要批量删除选中的所有角色吗？`, '提示').then(() => {
-        const toBeDeletedIds = this.multipleSelection.map(row => this.getIdValueOfFlatQueryObj(row))
-        roleApi.$batchDeleteByIdSet(toBeDeletedIds).then(() => {
-          this.fetchTableData()
-          this.$notify.success('角色批量删除成功')
-        })
-      }).finally(() => this.blurTargetButton(event))
-    },
-
   },
 }
 </script>

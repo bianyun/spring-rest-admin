@@ -1,26 +1,16 @@
 <template>
   <div class="app-container">
-    <div class="filter-container">
-      <div>
-        <el-input placeholder="用户名" class="filter-item" size="small" v-model="listQuery.roleName"
-                  :clearable="true"></el-input>
-        <el-input placeholder="昵称" class="filter-item" size="small" v-model="listQuery.roleValue"
-                  :clearable="true"></el-input>
-        <el-button type="primary" class="filter-item" size="small" icon="el-icon-search">
-          搜索
-        </el-button>
-      </div>
-    </div>
-    <div class="table-level-buttons">
-      <el-button type="success" class="filter-item" icon="el-icon-plus"
-                 v-if="hasPerm(button_sys_user_add)" size="small" @click="onAddBtnClick">
-        添加
-      </el-button>
-      <el-button type="danger" class="filter-item" icon="el-icon-delete" size="small" @click="onBatchDeleteBtnClick($event)"
-                 v-if="hasPerm(button_sys_user_batch_delete)" :disabled="multipleSelection.length === 0">
-        删除
-      </el-button>
-    </div>
+    <filter-container :no-table-level-buttons="!hasPermAdd && !hasPermBatchDelete"
+                      :flat-table-prfix="flatTablePrefix" :data-query-func="fetchTableData"
+                      :filter-items="filterItems"></filter-container>
+
+    <table-level-buttons
+        :has-perm-add="hasPermAdd"
+        :has-perm-batch-delete="hasPermBatchDelete"
+        :multiple-selection-array="multipleSelection"
+        :add-btn-click-handler="onAddBtnClick"
+        :batch-delete-btn-click-handler="onBatchDeleteBtnClick"
+    ></table-level-buttons>
     <el-table
       :ref="tableName"
       style="width: 100%"
@@ -30,48 +20,27 @@
       border
       fit
       highlight-current-row>
-      <el-table-column v-if="showSelectionColumn" type="selection" width="50" align="center"></el-table-column>
-      <el-table-column prop="sys_user__id" label="ID" width="50" align="center"></el-table-column>
-      <el-table-column label="用户名">
-        <template slot-scope="{ row: {sys_user__username: username} }">
-          {{username}}
-          <el-tag class="demo-users" style="margin-left: 5px" type="danger" size="mini" effect="plain" v-if="demoModeEnabled && demoPreservedUsers.includes(username)">演示用户</el-tag>
+      <el-table-column v-if="hasPermBatchDelete" type="selection" width="50" align="center"></el-table-column>
+      <el-table-column :prop="mainTableFlatKey('id')" label="ID" min-width="50" align="center"></el-table-column>
+      <el-table-column label="用户名" min-width="100" align="center">
+        <template slot-scope="{ row }">
+          {{ row[mainTableFlatKey('username')] }}
+          <el-tag class="demo-users" style="margin-left: 5px" type="danger" size="mini" effect="plain"
+                  v-if="demoModeEnabled && demoPreservedUsers.includes(row[mainTableFlatKey('username')])">演示用户</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="sys_user__nickname" label="昵称"></el-table-column>
-      <el-table-column prop="sys_user__realname" label="姓名"></el-table-column>
-      <el-table-column prop="sys_user__email" label="Email"></el-table-column>
-      <el-table-column prop="roles__name" label="角色"></el-table-column>
-      <el-table-column label="用户状态" align="center">
-        <template slot-scope="{ row: {sys_user__active: isActive} }">
-          <el-tag effect="plain" v-if="isActive" type="success" size="small">已启用</el-tag>
-          <el-tag effect="plain" v-else type="info" size="small">已停用</el-tag>
+      <el-table-column :prop="mainTableFlatKey('nickname')" label="昵称" min-width="130" align="center"></el-table-column>
+      <el-table-column :prop="mainTableFlatKey('realname')" label="姓名" min-width="100" align="center"></el-table-column>
+      <el-table-column :prop="mainTableFlatKey('email')" label="Email" min-width="160" align="center"></el-table-column>
+      <el-table-column :prop="derivedTableFlatKey('roles', 'name')" label="角色" min-width="100" align="center"></el-table-column>
+      <el-table-column label="用户状态"  min-width="100" align="center">
+        <template slot-scope="{ row }">
+          <el-tag effect="plain" v-if="isBooleanTrue(row[mainTableFlatKey('active')])" type="success" size="small">已启用</el-tag>
+          <el-tag effect="plain" v-if="isBooleanFalse(row[mainTableFlatKey('active')])" type="info" size="small">已停用</el-tag>
         </template>
       </el-table-column>
-      <el-table-column v-if="showActionColumn" label="操作" align="center" width="250"
-                       class-name="small-padding fixed-width">
-        <template slot-scope="{row: {sys_user__active: isActive}, row}">
-          <el-tooltip :hide-after="600" :enterable="false" content="编辑" placement="top">
-            <el-button @click="onEditBtnClick(row)" size="small" type="primary" icon="el-icon-edit"
-                       v-if="hasPerm(button_sys_user_update)" circle plain></el-button>
-          </el-tooltip>
-          <el-tooltip :hide-after="600" :enterable="false" content="分配角色" placement="top">
-            <el-button @click="onAssignRoleBtnClick(row)" size="small" type="warning"
-                       v-if="hasPerm(button_sys_user_assign_role)" icon="el-icon-user-solid" circle plain></el-button>
 
-          </el-tooltip>
-          <el-tooltip :hide-after="600" :enterable="false" content="删除" placement="top">
-            <el-button @click="onDeleteBtnClick(row, $event)" size="small" type="danger" icon="el-icon-delete"
-                       v-if="hasPerm(button_sys_user_delete)" circle plain></el-button>
-          </el-tooltip>
-          <el-button v-if="hasPerm(button_sys_user_active_on_off) && isActive"
-                     @click="onDeactivateBtnClick(row, $event)" size="mini" type="warning" plain>停用
-          </el-button>
-          <el-button v-if="hasPerm(button_sys_user_active_on_off) && !isActive" @click="onActivateBtnClick(row, $event)"
-                     size="mini" type="success" plain>启用
-          </el-button>
-        </template>
-      </el-table-column>
+      <table-operation-column :show-action-column="showActionColumn" :operation-items="tableOperationItems" :width="250"></table-operation-column>
     </el-table>
 
     <div v-if="demoModeEnabled" class="demo-mode-tips">
@@ -81,13 +50,13 @@
     <pagination v-show="total>0" :total="total" :page.sync="pageQueryParam.pageNumber"
                 :page-sizes="pageSizes" :limit.sync="pageQueryParam.pageSize" @pagination="onPagination" />
 
-    <el-dialog :title="editDialogStatus + '用户'" :visible.sync="showEditDialog"
-               :width="resolveDialogWidth('50%')" :top="resolveDialogMarginTop('5vh')"
+    <el-dialog :title="editDialogStatus + label" :visible.sync="showEditDialog"
+               :width="resolveDynamicRatioWidth('768px')" :top="resolveDialogMarginTop('5vh')"
                @close="resetDataForm(dataFormRef)" :close-on-click-modal="false">
       <el-form :rules="rules" :ref="dataFormRef" :model="tempFormModel"
-               :label-width="editDialogStatus === ADD ? '80px' : '70px'">
+               :label-width="editDialogStatus === ADD ? '90px' : '80px'">
         <el-row>
-          <el-col :span="12" :xs="24" style="padding-right: 15px;">
+          <el-col :span="12" :xs="24">
             <el-form-item label="用户名" prop="username">
               <el-input v-model.trim="tempFormModel.username"
                         placeholder="长度在 3 到 20 个字符"></el-input>
@@ -104,30 +73,30 @@
               <el-input v-model.trim="tempFormModel.email"
                         placeholder="Email"></el-input>
             </el-form-item>
+            <el-form-item label="密码" prop="password" v-if="editDialogStatus === ADD">
+              <el-input v-model.trim="tempFormModel.password" show-password :clearable="true"
+                        placeholder="长度为 6 到 20 位"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12" :xs="24">
+            <el-form-item label="确认密码" prop="confirmPassword" v-if="editDialogStatus === ADD">
+              <el-input v-model.trim="tempFormModel.confirmPassword" show-password :clearable="true"
+                        placeholder="长度为 6 到 20 位"></el-input>
+            </el-form-item>
             <el-form-item label="手机号" prop="mobile">
               <el-input v-model.trim="tempFormModel.mobile"
                         placeholder="请输入手机号码"></el-input>
             </el-form-item>
-          </el-col>
-          <el-col :span="12" :xs="24" style="padding-left: 10px; padding-right: 5px">
             <el-form-item label="性别" prop="gender">
               <el-radio-group v-model="tempFormModel.gender">
-                <el-radio v-for="item in enumLabelNameMap[ENUM_CLASS_NAME_GENDER]"
-                          :key="item.label" :label="item.label">{{ item.name }}
+                <el-radio v-for="item in genderOptions"
+                          :key="item.label" :label="item.name">{{ item.label }}
                 </el-radio>
               </el-radio-group>
             </el-form-item>
             <el-form-item label="头像" prop="pictureUrl">
               <el-input v-model.trim="tempFormModel.pictureUrl"
                         placeholder="头像地址"></el-input>
-            </el-form-item>
-            <el-form-item label="密码" prop="password" v-if="editDialogStatus === ADD">
-              <el-input v-model.trim="tempFormModel.password" show-password :clearable="true"
-                        placeholder="长度为 6 到 20 位"></el-input>
-            </el-form-item>
-            <el-form-item label="确认密码" prop="confirmPassword" v-if="editDialogStatus === ADD">
-              <el-input v-model.trim="tempFormModel.confirmPassword" show-password :clearable="true"
-                        placeholder="长度为 6 到 20 位"></el-input>
             </el-form-item>
             <el-form-item label="是否启用" prop="active">
               <el-switch v-model="tempFormModel.active"
@@ -144,7 +113,7 @@
     </el-dialog>
 
     <!-- 弹窗：用户分配角色 -->
-    <el-dialog :width="resolveDialogWidth('30%')" :top="resolveDialogMarginTop('25vh')"
+    <el-dialog :width="resolveDynamicRatioWidth('460px')" :top="resolveDialogMarginTop('25vh')"
                class="assign-role-dialog" :visible.sync="showAssignRoleDialog" :close-on-click-modal="true">
       <template slot="title">
         <span class="el-dialog__title">用户分配角色（{{ tempAssignRoleObj.nickname || tempAssignRoleObj.username }}）</span>
@@ -172,22 +141,21 @@
 </template>
 
 <script>
-import userApi from '@/api/_system/user'
-import roleApi from '@/api/_system/role'
-import Pagination from '@/components/Pagination'
-import { DialogStatus, MenuType, PermType } from '@/utils/enums'
-import baseMixin from '@/views/_module/_mixins/base-mixin'
+import { userApi } from '@/api/_system/user'
+import { roleApi } from '@/api/_system/role'
+import { DialogStatus } from '@/utils/enums'
+import baseListPageMixin from '@/views/_module/_mixins/base-list-page-mixin'
 import { SysPerms } from '@/utils/enums/perms/system'
 import { hasPerm, isCurrentUser } from '@/utils/permission'
 import rules from 'element-ui-validation'
 import { mapGetters } from 'vuex'
+import { isBooleanFalse, isBooleanTrue } from '@/utils/validator'
 
 export default {
-  username: 'SystemUserManage',
-  components: { Pagination },
-  mixins: [baseMixin],
+  name: 'SystemUserManage',
+  mixins: [baseListPageMixin],
   data() {
-    const initTempModel = {
+    const initTempFormModel = {
       id: null,
       username: '',
       nickname: null,
@@ -214,29 +182,34 @@ export default {
       }
     }
 
+
     return {
-      ...PermType,
-      ...MenuType,
-      ...SysPerms,
+      label: '用户',
+      pageId: 'sys_user',
+      confirmLabelColumn: 'username',
+      api: userApi,
+      pagePerms: SysPerms,
+      initTempFormModel,
+
       ...DialogStatus,
+      isBooleanTrue,
+      isBooleanFalse,
 
+      filterItems: [
+        { type: 'input', field: 'username', label: '用户名' },
+        { type: 'input', field: 'realname,nickname', label: '姓名 或 昵称' },
+        { type: 'select', field: 'gender', label: '性别', optionsFunc: () => this.genderOptions, optionLabelProp: 'label', optionValueProp: 'id' },
+      ],
 
-      showAssignRoleDialog: false,
-      dataFormRef: 'dataFormRef',
-      initTempModel,
-      tempFormModel: Object.assign({}, initTempModel),
-      tableName: 'dataTable',
-      multipleSelection: [],
+      tableOperationItems: [
+        { shape: 'circle', label: '编辑', buttonType: 'primary', icon: 'edit', visibleFunc: () => this.hasPermUpdate, clickHandler: this.onEditBtnClick },
+        { shape: 'circle', label: '分配角色', buttonType: 'warning', icon: 'user-solid', visibleFunc: () => this.hasPermAssignRole, clickHandler: this.onAssignRoleBtnClick },
+        { shape: 'circle', label: '删除', buttonType: 'danger', icon: 'delete', visibleFunc: () => this.hasPermDelete, clickHandler: this.onDeleteBtnClick },
+        { shape: 'normal', label: '启用', buttonType: 'success', icon: 'circle-check', visibleFunc: row => this.hasPermActiveOnOff && !this.isFlatRowActive(row), clickHandler: this.onActivateBtnClick },
+        { shape: 'normal', label: '停用', buttonType: 'warning', icon: 'circle-close', visibleFunc: row => this.hasPermActiveOnOff && this.isFlatRowActive(row), clickHandler: this.onDeactivateBtnClick },
+      ],
 
-      listQuery: {
-        roleName: '',
-        roleValue: '',
-      },
-      total: 0,
-      tableDataLoading: false,
-      tableData: [],
-      showEditDialog: false,
-      editDialogStatus: '',
+      tempFormModel: Object.assign({}, initTempFormModel),
       rules: {
         username: rules.string('用户名', 20, 3, 'change'),
         nickname: rules.string('昵称', 8, 2, 'change'),
@@ -253,6 +226,7 @@ export default {
         ],
       },
 
+      showAssignRoleDialog: false,
       tempAssignRoleObj: {
         id: null,
         username: null,
@@ -265,36 +239,23 @@ export default {
     }
   },
   computed: {
-    showActionColumn() {
-      return hasPerm(this.button_sys_user_active_on_off) ||
-        hasPerm(this.button_sys_user_update) ||
-        hasPerm(this.button_sys_user_delete)
+    hasPermAssignRole() {
+      return hasPerm(this.pagePerms[`button_${this.pageId}_assign_role`])
     },
-    showSelectionColumn() {
-      return hasPerm(this.button_sys_user_batch_delete)
+    showActionColumn() {
+      return this.hasPermAssignRole || this.hasPermActiveOnOff || this.hasPermUpdate || this.hasPermDelete
     },
     ...mapGetters([
       'demoModeEnabled',
       'demoPreservedUsers'
     ])
   },
-  created() {
-    this.fetchTableData()
-  },
   methods: {
-    async fetchTableData() {
-      this.tableDataLoading = true
-      const { list, totalElements } = await userApi.$pageFlatQuery(this.pageQueryParam)
-      this.tableData = list
-      this.total = totalElements
-      this.tableDataLoading = false
-    },
-
-    async onAssignRoleBtnClick({ sys_user__id: id, sys_user__name, sys_user__nickname }) {
+    async onAssignRoleBtnClick({ sys_user__id: id, sys_user__username, sys_user__nickname }) {
       this.allRoles = await roleApi.$getAll()
 
       this.tempAssignRoleObj.id = id
-      this.tempAssignRoleObj.username = sys_user__name
+      this.tempAssignRoleObj.username = sys_user__username
       this.tempAssignRoleObj.nickname = sys_user__nickname
 
       const roles = await userApi.getRolesByUserId(id)
@@ -312,99 +273,6 @@ export default {
         }
         this.$notify.success('用户分配角色成功')
       })
-    },
-
-    onPagination({ page, limit }) {
-      this.pageQueryParam.pageNumber = page
-      this.pageQueryParam.pageSize = limit
-      this.fetchTableData()
-    },
-    onEditDialogConfirm() {
-      this.$refs[this.dataFormRef].validate((valid) => {
-        if (!valid) return false
-
-        if (this.editDialogStatus === DialogStatus.ADD) {
-          userApi.$create(this.tempFormModel).then(() => {
-            this.fetchTableData()
-            this.showEditDialog = false
-            this.$notify.success('用户添加成功')
-          })
-        } else if (this.editDialogStatus === DialogStatus.EDIT) {
-          userApi.$update(this.tempFormModel).then(() => {
-            this.fetchTableData()
-            this.showEditDialog = false
-            this.$notify.success('用户更新成功')
-          })
-        }
-      })
-    },
-
-    resetDataForm() {
-      this.$refs[this.dataFormRef].resetFields()
-      Object.assign(this.tempFormModel, this.initTempModel)
-    },
-
-    handleSelectionChange(val) {
-      this.multipleSelection = val
-    },
-
-    onAddBtnClick() {
-      this.editDialogStatus = DialogStatus.ADD
-      Object.assign(this.tempFormModel, this.initTempModel)
-      this.showEditDialog = true
-    },
-
-    async onEditBtnClick(row) {
-      this.tempFormModel = await userApi.$findById(this.getIdValueOfFlatQueryObj(row))
-      this.editDialogStatus = DialogStatus.EDIT
-      this.showEditDialog = true
-    },
-
-    onDeleteBtnClick(row, event) {
-      const { sys_user__username: username } = row
-      this.$confirm(`您确定要删除用户【${username}】吗？`, '提示').then(() => {
-        userApi.$deleteById(this.getIdValueOfFlatQueryObj(row)).then(() => {
-          this.fetchTableData()
-          this.$notify.success('用户删除成功')
-        })
-      }).finally(() => this.blurTargetButton(event))
-    },
-
-    onBatchDeleteBtnClick(event) {
-      if (this.multipleSelection.length === 0) {
-        return false
-      }
-      this.$confirm(`您确定要批量删除选中的所有用户吗？`, '提示').then(() => {
-        const toBeDeletedIds = this.multipleSelection.map(row => this.getIdValueOfFlatQueryObj(row))
-        userApi.$batchDeleteByIdSet(toBeDeletedIds).then(() => {
-          this.fetchTableData()
-          this.$notify.success('用户批量删除成功')
-        })
-      }).finally(() => this.blurTargetButton(event))
-    },
-
-    onActivateBtnClick(row, event) {
-      this.blurTargetButton(event)
-
-      const { sys_user__username: username, sys_user__id: userId } = row
-      this.$confirm(`您确定要启用用户【${username}】吗？`, '提示').then(() => {
-        userApi.activateUserById(userId).then(() => {
-          this.fetchTableData()
-          this.$notify.success('用户启用成功')
-        })
-      }).finally(() => this.blurTargetButton(event))
-    },
-
-    onDeactivateBtnClick(row, event) {
-      this.blurTargetButton(event)
-
-      const { sys_user__username: username, sys_user__id: userId } = row
-      this.$confirm(`您确定要停用用户【${username}】吗？`, '提示').then(() => {
-        userApi.deactivateUserById(userId).then(() => {
-          this.fetchTableData()
-          this.$notify.success('用户停用成功')
-        })
-      }).finally(() => this.blurTargetButton(event))
     },
   },
 }

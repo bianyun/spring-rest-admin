@@ -1,4 +1,4 @@
-import BaseApi from '@/api/_base/base-api'
+import { BaseApi } from '@/api/_base/base-api'
 
 const URL_PREFIX = '/lib/publishers'
 
@@ -12,4 +12,4 @@ class PublisherApi extends BaseApi {
 
 }
 
-export default new PublisherApi()
+export const publisherApi = new PublisherApi()

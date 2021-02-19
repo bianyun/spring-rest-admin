@@ -1,5 +1,4 @@
 import { forOwn } from 'lodash-es/object'
-import Vue from 'vue'
 
 /**
  * Parse the time to string

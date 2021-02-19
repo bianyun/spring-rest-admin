@@ -273,6 +273,7 @@ $cursor: #fff;
 
 <style lang="scss" scoped>
 @import "~@/styles/variables.scss";
+
 $bg:#2d3a4b;
 $dark_gray:#889aa4;
 $light_gray:#eee;
@@ -290,6 +291,10 @@ $light_gray:#eee;
     padding: 160px 35px 0;
     margin: 0 auto;
     overflow: hidden;
+
+    @media #{$lg-down} {
+      padding-top: calc(50vh - 200px);
+    }
   }
 
   .tips {
@@ -326,6 +331,10 @@ $light_gray:#eee;
       margin: 0 auto 40px auto;
       text-align: center;
       font-weight: bolder;
+
+      @media #{$lg-down} {
+        margin-bottom: 20px;
+      }
     }
 
     .sparse {

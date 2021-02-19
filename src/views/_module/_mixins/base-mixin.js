@@ -1,38 +1,41 @@
-
 import { hasPerm } from '@/utils/permission'
 import { ENUM_CLASS_NAME_GENDER } from '@/utils/consts'
-import miscApi from '@/api/_system/misc'
+import { miscApi } from '@/api/_system/misc'
 import CountryOptions from '@/utils/consts/country-options'
-import { resolveDialogMarginTop, resolveDialogWidth } from '@/utils/helper'
+import { convertCentsToYuan, resolveDialogMarginTop, resolveDynamicRatioWidth } from '@/utils/helper'
+import { mapState } from 'vuex'
 
 export default {
   name: 'baseMixin',
-
-
-  data: function () {
-    const pageSizes = [7, 10, 20, 30, 50, 100]
+  data() {
     return {
-      DELIMITER_BETWEEN_TABLE_AND_FIELD: '__',
       ENUM_CLASS_NAME_GENDER,
+      DELIMITER_BETWEEN_TABLE_AND_FIELD: '__',
 
-      enumLabelNameMap: {},
+      enumLabelNameMap: null,
       countryOptions: CountryOptions,
-
-      pageSizes: pageSizes,
-
-      pageQueryParam: {
-        pageNumber: 1,
-        pageSize: pageSizes[0],
-        queryConditionExpr: '',
-        querySortExpr: '',
-      },
     }
+  },
+  computed: {
+    genderOptions() {
+      if (this.enumLabelNameMap) {
+        return this.enumLabelNameMap[this.ENUM_CLASS_NAME_GENDER]
+      } else {
+        return []
+      }
+    },
+    ...mapState({
+      device: state => state.app.device
+    }),
+    isMobile() {
+      return this.device === 'mobile'
+    },
   },
   async created() {
     this.enumLabelNameMap = await miscApi.getEnumLabelNameMap()
   },
   methods: {
-    resolveDialogWidth,
+    resolveDynamicRatioWidth,
     resolveDialogMarginTop,
 
     /**
@@ -79,21 +82,17 @@ export default {
     },
 
     /**
-     * 从后台 FlatQuery查询得到的 key-value扁平对象中获取ID字段的值
+     * el-table-column 组件的 formatter参数对应的 金额分到元的转换器
      *
-     * @param flatQueryObj {Object} FlatQuery扁平对象
-     * @returns {number} ID字段的值
+     * @param row 行数据
+     * @param column 列信息
+     * @param cellValue 单元格的值
+     * @returns {String} 金额由单位分转换为单位元后的值
      */
-    getIdValueOfFlatQueryObj(flatQueryObj) {
-      const suffixOfIdKey = this.DELIMITER_BETWEEN_TABLE_AND_FIELD + 'id'
-      const flatIdKey = Object.keys(flatQueryObj).find((key) =>
-        key.endsWith(suffixOfIdKey)
-      )
-      if (!flatIdKey) {
-        console.error('flatIdKey is not valid')
-      }
-      return flatQueryObj[flatIdKey]
+    moneyCentsToYuanFormatter(row, column, cellValue) {
+      return '￥' + convertCentsToYuan(cellValue)
     },
+
 
     /**
      * 点击按钮后强制失去焦点
@@ -131,24 +130,16 @@ export default {
     translateJooqEnumValue(value) {
       if (value.indexOf('_#_') > 0) {
         let enumName, fieldValue
-        ;[enumName, fieldValue] = value.split('_#_', 2)
+        [enumName, fieldValue] = value.split('_#_', 2)
         const items = this.enumLabelNameMap[enumName]
         if (items && items.length > 0) {
-          const foundItem = items.find((item) => item['label'] === fieldValue)
-          if (foundItem && foundItem['name']) {
-            return foundItem['name']
+          const foundItem = items.find((item) => item['name'] === fieldValue)
+          if (foundItem && foundItem['label']) {
+            return foundItem['label']
           }
         }
       }
       return value
     },
-
-    // resolveDialogWidth(widthInDesktop, widthInMobile = '95%') {
-    //   return window.innerWidth > 1200 ? widthInDesktop : widthInMobile
-    // },
-    //
-    // resolveDialogMarginTop(mobileMarginTop, desktopMarginTop = '15vh') {
-    //   return window.innerWidth < 1200 ? mobileMarginTop : desktopMarginTop
-    // }
   },
 }

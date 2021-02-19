@@ -1,5 +1,5 @@
 
-import CoreApi from '@/api/_base/core-api'
+import { CoreApi } from '@/api/_base/core-api'
 
 const URL_PREFIX = '/sys/auth'
 
@@ -20,4 +20,4 @@ class AuthApi extends CoreApi {
   }
 }
 
-export default new AuthApi()
+export const authApi = new AuthApi()

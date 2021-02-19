@@ -1,4 +1,4 @@
-import BaseApi from '@/api/_base/base-api'
+import { BaseApi } from '@/api/_base/base-api'
 
 const URL_PREFIX = '/sys/roles'
 
@@ -31,4 +31,4 @@ class RoleApi extends BaseApi {
   }
 }
 
-export default new RoleApi()
+export const roleApi = new RoleApi()

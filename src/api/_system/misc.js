@@ -1,4 +1,4 @@
-import CoreApi from '@/api/_base/core-api'
+import { CoreApi } from '@/api/_base/core-api'
 
 const URL_PREFIX = '/sys/misc'
 
@@ -16,4 +16,4 @@ class MiscApi extends CoreApi {
 
 }
 
-export default new MiscApi()
+export const miscApi = new MiscApi()

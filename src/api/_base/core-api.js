@@ -3,7 +3,7 @@ import axiosInstance from '@/utils/request'
 /**
  * 核心HTTP请求
  */
-export default class CoreApi {
+export class CoreApi {
   /**
    * 构造方法
    *

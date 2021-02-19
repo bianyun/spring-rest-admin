@@ -1,27 +1,15 @@
 <template>
   <div class="app-container">
-    <div class="filter-container">
-      <div style="float: left">
-        <el-input placeholder="标题" class="filter-item" size="small" v-model="listQuery.roleName"
-                  :clearable="true"></el-input>
-        <el-input placeholder="ISBN" class="filter-item" size="small" v-model="listQuery.roleValue"
-                  :clearable="true"></el-input>
-        <el-button type="primary" class="filter-item" size="small" icon="el-icon-search">
-          搜索
-        </el-button>
-      </div>
-    </div>
-
-    <div class="table-level-buttons">
-      <el-button type="success" class="filter-item" icon="el-icon-plus"
-                 v-if="hasPerm(button_lib_book_add)" size="small" @click="onAddBtnClick">
-        添加
-      </el-button>
-      <el-button type="danger" class="filter-item" icon="el-icon-delete" size="small" @click="onBatchDeleteBtnClick($event)"
-                 v-if="hasPerm(button_lib_book_batch_delete)" :disabled="multipleSelection.length === 0">
-        删除
-      </el-button>
-    </div>
+    <filter-container :no-table-level-buttons="!hasPermAdd && !hasPermBatchDelete"
+                      :flat-table-prfix="flatTablePrefix" :data-query-func="fetchTableData"
+                      :filter-items="filterItems"></filter-container>
+    <table-level-buttons
+        :has-perm-add="hasPermAdd"
+        :has-perm-batch-delete="hasPermBatchDelete"
+        :multiple-selection-array="multipleSelection"
+        :add-btn-click-handler="onAddBtnClick"
+        :batch-delete-btn-click-handler="onBatchDeleteBtnClick"
+    ></table-level-buttons>
 
     <el-table
       :ref="tableName"
@@ -32,42 +20,22 @@
       border
       fit
       highlight-current-row>
-      <el-table-column v-if="showSelectionColumn" type="selection" width="50" align="center"></el-table-column>
-      <el-table-column prop="lib_book__title" label="标题"></el-table-column>
-      <el-table-column prop="lib_book__isbn" label="ISBN"></el-table-column>
-      <el-table-column prop="lib_publisher__name" label="出版社"></el-table-column>
-      <el-table-column prop="authors__name" label="作者"></el-table-column>
-<!--      <el-table-column prop="lib_book__translaters" label="译者" width="120"></el-table-column>-->
-      <el-table-column label="字数" align="center" width="100">
-        <template slot-scope="{ row: {lib_book__word_count} }">
-          {{ lib_book__word_count }} 千字
-        </template>
-      </el-table-column>
-      <el-table-column label="价格" align="center" width="100">
-        <template slot-scope="{ row: {lib_book__unit_price} }">
-          {{ (lib_book__unit_price / 100).toFixed(2) }} 元
-        </template>
-      </el-table-column>
+      <el-table-column v-if="hasPermBatchDelete" type="selection" width="50" align="center"></el-table-column>
+      <el-table-column :prop="mainTableFlatKey('title')" label="标题" min-width="250"></el-table-column>
+      <el-table-column :prop="mainTableFlatKey('isbn')" label="ISBN" align="center" width="150"></el-table-column>
+      <el-table-column :prop="derivedTableFlatKey('lib_publisher', 'name')" label="出版社" align="center" min-width="140"></el-table-column>
+      <el-table-column :prop="mainTableFlatKey('published_on')" label="出版时间" align="center" width="100"></el-table-column>
+      <el-table-column :prop="derivedTableFlatKey('authors', 'name')" label="作者" min-width="250"></el-table-column>
+      <el-table-column :prop="mainTableFlatKey('word_count')" label="字数" align="center" width="80" :formatter="wordCountFormatter"></el-table-column>
+      <el-table-column :prop="mainTableFlatKey('unit_price')" label="价格" align="center" width="80" :formatter="moneyCentsToYuanFormatter"></el-table-column>
 
-      <el-table-column v-if="showActionColumn" label="操作" align="center" width="200"
-                       class-name="small-padding fixed-width">
-        <template slot-scope="{ row }">
-          <el-tooltip :hide-after="600" :enterable="false" content="编辑" placement="top">
-            <el-button @click="onEditBtnClick(row)" size="small" type="primary" icon="el-icon-edit"
-                       v-if="hasPerm(button_lib_book_update)" circle plain></el-button>
-          </el-tooltip>
-          <el-tooltip :hide-after="600" :enterable="false" content="删除" placement="top">
-            <el-button @click="onDeleteBtnClick(row, $event)" size="small" type="danger" icon="el-icon-delete"
-                       v-if="hasPerm(button_lib_book_delete)" circle plain></el-button>
-          </el-tooltip>
-        </template>
-      </el-table-column>
+      <table-operation-column :show-action-column="showActionColumn" :operation-items="tableOperationItems" :width="130"></table-operation-column>
     </el-table>
     <pagination v-show="total>0" :total="total" :page.sync="pageQueryParam.pageNumber"
                 :page-sizes="pageSizes" :limit.sync="pageQueryParam.pageSize" @pagination="onPagination" />
 
-    <el-dialog :title="editDialogStatus + '图书'" :visible.sync="showEditDialog"
-               :width="resolveDialogWidth('38%')" :top="resolveDialogMarginTop('10vh')"
+    <el-dialog :title="editDialogStatus + label" :visible.sync="showEditDialog"
+               :width="resolveDynamicRatioWidth('583px')" :top="resolveDialogMarginTop('10vh')"
                @close="resetDataForm(dataFormRef)" :close-on-click-modal="false">
       <el-form :rules="rules" :ref="dataFormRef" :model="tempFormModel" label-width="80px">
         <el-form-item label="标题" prop="title">
@@ -114,6 +82,10 @@
             </el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="出版时间" prop="publishedOn">
+          <el-date-picker type="month" style="width: 100%" v-model="tempFormModel.publishedOn" :editable="false" value-format="yyyy-MM"
+                          placeholder="请选择发行时间"></el-date-picker>
+        </el-form-item>
         <el-form-item label="译者" prop="translaters">
           <el-input v-model="tempFormModel.translaters" placeholder="请输入译者"></el-input>
         </el-form-item>
@@ -127,50 +99,52 @@
 </template>
 
 <script>
-import bookApi from '@/api/library/book'
-import publisherApi from '@/api/library/publisher'
-import authorApi from '@/api/library/author'
-import Pagination from '@/components/Pagination'
-import { DialogStatus } from '@/utils/enums'
-import baseMixin from '@/views/_module/_mixins/base-mixin'
-import { hasPerm } from '@/utils/permission'
+import { bookApi } from '@/api/library/book'
 import rules from 'element-ui-validation'
 import { LibPerms } from '@/utils/enums/perms/library'
+import baseListPageMixin from '@/views/_module/_mixins/base-list-page-mixin'
+import { publisherApi } from '@/api/library/publisher'
+import { authorApi } from '@/api/library/author'
 
 export default {
   username: 'LibraryBookManage',
-  components: { Pagination },
-  mixins: [baseMixin],
+  mixins: [baseListPageMixin],
   data() {
-    const initTempModel = {
+    const initTempFormModel = {
       id: null,
       title: '',
       isbn: '',
       wordCount: null,
       unitPrice: null,
       translaters: null,
+      publishedOn: null,
       publisher: null,
       authors: [],
     }
 
     return {
-      ...LibPerms,
+      label: '图书',
+      pageId: 'lib_book',
+      confirmLabelColumn: 'title',
+      api: bookApi,
+      pagePerms: LibPerms,
+      initTempFormModel,
 
-      dataFormRef: 'dataFormRef',
-      initTempModel,
-      tempFormModel: Object.assign({}, initTempModel),
-      tableName: 'dataTable',
-      multipleSelection: [],
+      filterItems: [
+        { type: 'input', field: 'title', label: '图书标题' },
+        { type: 'input', field: 'isbn', label: 'ISBN' },
+        { type: 'input', field: 'authors__name', label: '作者名称' },
+        { type: 'select', field: 'publisher_id', label: '出版社', width: 155,
+          optionsFunc: () => this.allPublishers, optionLabelProp: 'name', optionValueProp: 'id' },
+        { type: 'year-month-range', field: 'published_on', label: '出版时间' },
+      ],
 
-      listQuery: {
-        roleName: '',
-        roleValue: '',
-      },
-      total: 0,
-      tableDataLoading: false,
-      tableData: [],
-      showEditDialog: false,
-      editDialogStatus: '',
+      tableOperationItems: [
+        { shape: 'circle', label: '编辑', buttonType: 'primary', icon: 'edit', visibleFunc: () => this.hasPermUpdate, clickHandler: this.onEditBtnClick },
+        { shape: 'circle', label: '删除', buttonType: 'danger', icon: 'delete', visibleFunc: () => this.hasPermDelete, clickHandler: this.onDeleteBtnClick },
+      ],
+
+      tempFormModel: Object.assign({}, initTempFormModel),
       rules: {
         title: rules.string('标题', 100, null, 'change'),
         isbn: rules.string('ISBN', 20, null, 'change'),
@@ -185,112 +159,25 @@ export default {
       allAuthors: [],
     }
   },
-  computed: {
-    showActionColumn() {
-      return hasPerm(this.button_lib_book_update) ||
-        hasPerm(this.button_lib_book_delete)
-    },
-    showSelectionColumn() {
-      return hasPerm(this.button_lib_book_batch_delete)
-    },
-  },
-  created() {
-    this.fetchTableData()
+  async created() {
+    this.allPublishers = await publisherApi.$getAll()
   },
   methods: {
-    async fetchTableData() {
-      this.tableDataLoading = true
-      const { list, totalElements } = await bookApi.$pageFlatQuery(this.pageQueryParam)
-      this.tableData = list
-      this.total = totalElements
-      this.tableDataLoading = false
+    hookWhenAddOrEditBtnClick() {
+      publisherApi.$getAll().then(res => this.allPublishers = res)
+      authorApi.$getAll().then(res => this.allAuthors = res)
     },
-
-    onPagination({ page, limit }) {
-      this.pageQueryParam.pageNumber = page
-      this.pageQueryParam.pageSize = limit
-      this.fetchTableData()
-    },
-    onEditDialogConfirm() {
-      this.$refs[this.dataFormRef].validate((valid) => {
-        if (!valid) return false
-
-        const unitPrice = this.tempFormModel.unitPrice * 100
-        const data = Object.assign({}, this.tempFormModel, { unitPrice })
-
-        if (this.editDialogStatus === DialogStatus.ADD) {
-          bookApi.$create(data).then(() => {
-            this.fetchTableData()
-            this.showEditDialog = false
-            this.$notify.success('图书添加成功')
-          })
-        } else if (this.editDialogStatus === DialogStatus.EDIT) {
-          bookApi.$update(data).then(() => {
-            this.fetchTableData()
-            this.showEditDialog = false
-            this.$notify.success('图书更新成功')
-          })
-        }
-      })
-    },
-
-    resetDataForm() {
-      this.$refs[this.dataFormRef].resetFields()
-      Object.assign(this.tempFormModel, this.initTempModel)
-    },
-
-    handleSelectionChange(val) {
-      this.multipleSelection = val
-    },
-
-    async onAddBtnClick() {
-      this.allPublishers = await publisherApi.$getAll()
-      this.allAuthors = await authorApi.$getAll()
-
-      this.editDialogStatus = DialogStatus.ADD
-      Object.assign(this.tempFormModel, this.initTempModel)
-      this.showEditDialog = true
-    },
-
-    async onEditBtnClick(row) {
-      this.allPublishers = await publisherApi.$getAll()
-      this.allAuthors = await authorApi.$getAll()
-
-      this.tempFormModel = await bookApi.$findById(this.getIdValueOfFlatQueryObj(row))
+    hookAfterInitEditObj() {
       this.tempFormModel.unitPrice = (this.tempFormModel.unitPrice / 100).toFixed(2)
-
-      this.editDialogStatus = DialogStatus.EDIT
-      this.showEditDialog = true
     },
-
-    onDeleteBtnClick(row, event) {
-      const { lib_book__title: name } = row
-      this.$confirm(`您确定要删除图书【${name}】吗？`, '提示').then(() => {
-        bookApi.$deleteById(this.getIdValueOfFlatQueryObj(row)).then(() => {
-          this.fetchTableData()
-          this.$notify.success('图书删除成功')
-        })
-      }).finally(() => {
-        this.blurTargetButton(event)
-      })
+    hookBeforeSaveEditObj() {
+      const unitPrice = (this.tempFormModel.unitPrice * 100).toFixed(0)
+      this.tempFormModel = Object.assign({}, this.tempFormModel, { unitPrice })
     },
-
-    onBatchDeleteBtnClick(event) {
-      if (this.multipleSelection.length === 0) {
-        return false
-      }
-      this.$confirm(`您确定要批量删除选中的所有图书吗？`, '提示').then(() => {
-        const toBeDeletedIds = this.multipleSelection.map(row => this.getIdValueOfFlatQueryObj(row))
-        bookApi.$batchDeleteByIdSet(toBeDeletedIds).then(() => {
-          this.fetchTableData()
-          this.$notify.success('图书批量删除成功')
-        })
-      }).finally(() => {
-        this.blurTargetButton(event)
-      })
+    wordCountFormatter(row, column, cellValue) {
+      return cellValue + ' 千字'
     },
-
-  },
+  }
 }
 </script>
 

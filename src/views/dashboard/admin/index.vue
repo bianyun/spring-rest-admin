@@ -57,6 +57,7 @@ export default {
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
+@import "~@/styles/variables.scss";
 
 .pan-info {
   position: absolute;
@@ -68,11 +69,11 @@ export default {
 }
 
 .pan-item {
-  @media screen and (min-width: 1200px) {
+  @media #{$sm-up} {
     float: left;
     z-index: 1;
   }
-  @media screen and (max-width: 1200px) {
+  @media #{$sm-down} {
     display: block;
     margin-left: calc(50% - 7.5rem);
   }
@@ -104,22 +105,22 @@ export default {
 
 .dashboard-editor-container {
   background-color: #F2F6FC;
-  @media screen and (min-width: 1200px) {
+  @media #{$sm-up} {
     min-height: 88vh;
   }
-  @media screen and (max-width: 1200px) {
+  @media #{$sm-down} {
     min-height: 85vh;
   }
   padding: 5rem 5rem 0;
 }
 
 .user-info {
-  @media screen and (min-width: 1200px) {
+  @media #{$sm-up} {
     margin-left: 5rem;
     font-size: 4rem;
     line-height: 10rem;
   }
-  @media screen and (max-width: 1200px) {
+  @media #{$sm-down} {
     margin-top: 2rem;
     margin-bottom: 1rem;
     display: block;
@@ -130,10 +131,10 @@ export default {
 }
 
 .user-roles {
-  @media screen and (min-width: 1200px) {
+  @media #{$sm-up} {
     display: inline;
   }
-  @media screen and (max-width: 1200px) {
+  @media #{$sm-down} {
     margin-bottom: 10px;
     width: 100%;
     display: flex;
@@ -151,10 +152,10 @@ export default {
 }
 
 .perm-info {
-  @media screen and (min-width: 1200px) {
+  @media #{$sm-up} {
     margin-left: 20rem;
   }
-  @media screen and (max-width: 1200px) {
+  @media #{$sm-down} {
     margin-top: 1rem;
     margin-left: calc(50% - 9.7rem);
     font-size: 2.5rem;

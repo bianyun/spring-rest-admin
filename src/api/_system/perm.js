@@ -1,5 +1,5 @@
 
-import CoreApi from '@/api/_base/core-api'
+import { CoreApi } from '@/api/_base/core-api'
 
 const URL_PREFIX = '/sys/perms'
 
@@ -92,4 +92,4 @@ class PermApi extends CoreApi {
   }
 }
 
-export default new PermApi()
+export const permApi = new PermApi()

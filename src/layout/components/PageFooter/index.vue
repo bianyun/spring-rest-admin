@@ -1,6 +1,8 @@
 <template>
   <div class="footer" v-if="showFooter">
-    <span v-if="copyRightAvailable" class="copyright">&copy; {{yearInfo}} <a :href="copyrightLink">{{copyrightLabel}}</a></span>
+    <span v-if="copyRightAvailable" class="copyright">&copy; {{yearInfo}} <a :href="copyrightLink">{{copyrightLabel}}</a>
+      <span v-if="isEnvDev" style="margin-left: 10px">[dpr = {{devicePixelRatio}}]</span>
+    </span>
     <a v-if="policeBeianInfo" class="police-beian"
        :href="`http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=${policeBeianNo}`" target="_blank">
       <img :src="policeBeianIcon" height="13" width="13" alt="police_beian_icon">
@@ -67,6 +69,17 @@ export default {
         return result[1]
       } else {
         return null
+      }
+    },
+    isEnvDev() {
+      return process.env.NODE_ENV === 'development'
+    },
+    devicePixelRatio() {
+      const ratio = window.devicePixelRatio
+      if (ratio) {
+        return ratio.toFixed(2)
+      } else {
+        return 'NAN'
       }
     },
   },

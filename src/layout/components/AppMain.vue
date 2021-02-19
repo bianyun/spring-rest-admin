@@ -30,8 +30,8 @@ export default {
   width: 100%;
   position: relative;
   overflow: hidden;
-  @media screen and (max-width: 1200px) {
-    padding-bottom: $pageFooterHeight + 15px;
+  @media #{$lg-down} {
+    padding-bottom: 20px;
   }
 }
 
@@ -52,6 +52,10 @@ export default {
 .hasPageFooter {
   .app-main {
     min-height: calc(100vh - #{$navBarHeight + $pageFooterHeight});
+
+    @media #{$lg-down} {
+      padding-bottom: $pageFooterHeight + 15px;
+    }
   }
 }
 
@@ -61,15 +65,4 @@ export default {
   }
 }
 
-
-
-</style>
-
-<style lang="scss">
-// fix css style bug in open el-dialog
-//.el-popup-parent--hidden {
-//  .fixed-header {
-//    padding-right: 15px;
-//  }
-//}
 </style>

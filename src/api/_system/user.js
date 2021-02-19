@@ -1,4 +1,4 @@
-import BaseApi from '@/api/_base/base-api'
+import { BaseApi } from '@/api/_base/base-api'
 
 const URL_PREFIX = '/sys/users'
 
@@ -67,4 +67,4 @@ class UserApi extends BaseApi {
   }
 }
 
-export default new UserApi()
+export const userApi = new UserApi()

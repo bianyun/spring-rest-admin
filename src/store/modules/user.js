@@ -1,9 +1,10 @@
-import authApi from '@/api/_system/auth'
-import userApi from '@/api/_system/user'
+// import authApi from '@/api/_system/auth'
+import { userApi } from '@/api/_system/user'
 import { getToken, removeToken, setToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 import avatarDefault from '@/assets/image/avatar-default.jpg'
 import { ROLE_SUPERADMIN } from '@/utils/consts'
+import { authApi } from '@/api/_system/auth'
 
 const state = {
   token: getToken(),

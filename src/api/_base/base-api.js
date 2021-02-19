@@ -1,11 +1,11 @@
 
-import CoreApi from '@/api/_base/core-api'
+import { CoreApi } from '@/api/_base/core-api'
 
 // noinspection JSUnusedGlobalSymbols
 /**
  * 基础接口，对应后台 AbstractBaseController 中包含的接口方法
  */
-export default class BaseApi extends CoreApi {
+export class BaseApi extends CoreApi {
   constructor(urlPrefix) {
     super(urlPrefix)
   }

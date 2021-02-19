@@ -3,7 +3,7 @@
     <el-row :gutter="20">
 
       <!--菜单按钮权限树-->
-      <el-col :span="14" :xs="24">
+      <el-col :span="24" :lg="14">
         <el-card class="box-card">
           <div slot="header">
             <div class="title-box">
@@ -73,7 +73,7 @@
       </el-col>
 
       <!--接口权限树-->
-      <el-col :span="10" :xs="24" class="api-card">
+      <el-col :span="24" :lg="10" class="api-card">
         <el-card class="box-card">
           <div slot="header">
             <div class="title-box">
@@ -122,7 +122,7 @@
     </el-row>
 
     <!--弹窗：新增或编辑按钮权限-->
-    <el-dialog :width="resolveDialogWidth(buttonDialogWidthRatioMap[showApiPermValuesInBtnDialog])"
+    <el-dialog :width="resolveDynamicRatioWidth(buttonDialogWidthMap[showApiPermValuesInBtnDialog])"
                :title="btnPermDialogTitle" :top="resolveDialogMarginTop('4vh', '12vh')"
                :visible.sync="showBtnPermDialog"
                :close-on-click-modal="false" id="btn-perm-dialog">
@@ -180,7 +180,7 @@
     </el-dialog>
 
     <!--弹窗：菜单关联接口权限-->
-    <el-dialog :width="resolveDialogWidth('28%')"
+    <el-dialog :width="resolveDynamicRatioWidth('430px')"
                :visible.sync="showMenuLinkApiDialog"
                :close-on-click-modal="true" id="menu-link-api-dialog">
       <template slot="title">
@@ -225,7 +225,7 @@
 <script>
 import treeUtil from '../tree'
 import { resetAllPropsToNull } from '@/utils'
-import permApi from '@/api/_system/perm'
+import { permApi } from '@/api/_system/perm'
 import lodash from 'lodash-es'
 import deepdash from 'deepdash-es'
 
@@ -251,12 +251,16 @@ export default {
       }
     };
 
+    const initialValueOfShowApiPermValuesInBtn = window.innerWidth > 768
+
     // noinspection JSUnusedGlobalSymbols
     return {
       ...MenuType,
       ...PermLevel,
       ...PermType,
       ...SysPerms,
+
+      linkDialogWidth: '430px',
 
       apiPermTreeRef: 'apiPermTreeRef',
       menuButtonTreeRef: 'menuButtonTreeRef',
@@ -285,16 +289,16 @@ export default {
         children: 'children',
       },
 
-      showApiPermValuesInBtnDialog: true,
-      buttonDialogWidthRatioMap: {
-        true: '38%',
-        false: '29%'
+      showApiPermValuesInBtnDialog: initialValueOfShowApiPermValuesInBtn,
+      buttonDialogWidthMap: {
+        true: '583px',
+        false: '445px'
       },
 
       resolvedBtnPermValuePrefix: '',
 
-      menuBtnTreeFilterPlaceholder: '输入 菜单 或 按钮 的 权限名称、权限值 进行过滤',
-      filterPlaceholderForApiPermTree: '输入 接口 的权限名称、权限值 进行过滤',
+      menuBtnTreeFilterPlaceholder: '输入菜单或按钮的权限名称或值过滤',
+      filterPlaceholderForApiPermTree: '输入接口的权限名称或值过滤',
       menuBtnTreeFilterInput: '',
       apiPermTreeFilterInput: '',
 
@@ -354,6 +358,7 @@ export default {
     btnPermDialogTitle() {
       return `${this.btnPermDialogStatus}按钮权限`
     },
+
   },
 
   created() {
@@ -361,10 +366,6 @@ export default {
   },
 
   methods: {
-    // buttonDialogMarginTop() {
-    //   return window.innerWidth > 1200 ? '12vh' : '4vh'
-    // },
-
     async loadApiPermTreeData() {
       const { apiPermTreeData, unsyncedApiPermValues } = await permApi.fetchApiPermMetaData()
       this.apiPermTreeData = apiPermTreeData
@@ -695,11 +696,36 @@ export default {
   align-items: center;
   padding-top: 0;
   padding-bottom: 0;
-  span.header, span.header > span.header.el-tag {
+  span.header {
     font-size: 22px;
+    @media #{$xs-down} {
+      font-size: 18px;
+    }
+
+    span.header.el-tag {
+      font-size: 22px;
+      @media #{$xs-down} {
+        font-size: 18px;
+        padding-left: 5px;
+        padding-right: 5px;
+        height: 22px;
+        line-height: 21px;
+      }
+    }
+    span.sync-status.el-tag {
+      @media #{$xs-down} {
+        padding-left: 2px;
+        padding-right: 2px;
+        height: 17px;
+        line-height: 16px;
+      }
+    }
   }
   .sync-button {
     font-size: 25px;
+    @media #{$xs-down} {
+      font-size: 20px;
+    }
   }
 }
 
@@ -732,61 +758,50 @@ $heightExceptScrollBarInContainer: 4px + $navBarHeight + 2*$appContainerPadding 
                   $cardBodyPaddingTop + $cardBodyPaddingBottom + $filterInputHeight + $filterInputMarginBottom;
 
 
-::v-deep {
-  .el-card__header {
-    @media screen and (min-width: 1200px) {
-      height: $cardHeaderHeight;
-    }
-    @media screen and (max-width: 1200px) {
-      height: $cardHeaderHeight + 25px;
-    }
-    padding-bottom: 15px;
+::v-deep .el-card__header {
+  @media #{$lg-up} {
+    height: $cardHeaderHeight;
   }
+  padding-bottom: 15px;
+}
 
-  .el-card__body {
-    padding: $cardBodyPaddingTop 10px $cardBodyPaddingBottom;
+::v-deep .el-card__body {
+  padding: $cardBodyPaddingTop 10px $cardBodyPaddingBottom;
+}
+
+.el-scrollbar {
+  @media #{$lg-up} {
+    height: calc(100vh - #{$heightExceptScrollBarInContainer});
   }
-
-  .el-scrollbar {
-    @media screen and (min-width: 1200px) {
+  @media #{$lg-down} {
+    height: 100%;
+  }
+  ::v-deep .el-scrollbar__wrap {
+    @media #{$lg-up} {
       height: calc(100vh - #{$heightExceptScrollBarInContainer});
     }
-    @media screen and (max-width: 1200px) {
+    @media #{$lg-down} {
       height: 100%;
     }
-    .el-scrollbar__wrap {
-      @media screen and (min-width: 1200px) {
-        height: calc(100vh - #{$heightExceptScrollBarInContainer});
-      }
-      @media screen and (max-width: 1200px) {
-        height: 100%;
-        margin-right: -15px!important;
-      }
-      margin-bottom: 10px;
-      padding-right: 15px;
+    @media #{$sm-down} {
+      margin-right: -5px!important;
     }
-    .el-scrollbar__bar.is-vertical {
-      margin-right: 2px;
-      width: 3px;
+    @media #{$xs-down} {
+      margin-right: -10px!important;
     }
+    margin-bottom: 10px;
+    padding-right: 15px;
   }
 }
 
 .hasTagsView {
   .el-scrollbar {
-    @media screen and (min-width: 1200px) {
+    @media #{$lg-up} {
       height: calc(100vh - #{$heightExceptScrollBarInContainer + $tagsViewHeight});
     }
-    @media screen and (max-width: 1200px) {
-      height: 100%;
-    }
     ::v-deep .el-scrollbar__wrap {
-      @media screen and (min-width: 1200px) {
+      @media #{$lg-up} {
         height: calc(100vh - #{$heightExceptScrollBarInContainer + $tagsViewHeight});
-      }
-      @media screen and (max-width: 1200px) {
-        height: 100%;
-        margin-right: -15px!important;
       }
     }
   }
@@ -794,19 +809,12 @@ $heightExceptScrollBarInContainer: 4px + $navBarHeight + 2*$appContainerPadding 
 
 .hasPageFooter {
   .el-scrollbar {
-    @media screen and (min-width: 1200px) {
+    @media #{$lg-up} {
       height: calc(100vh - #{$heightExceptScrollBarInContainer + 0.5*$pageFooterHeight});
     }
-    @media screen and (max-width: 1200px) {
-      height: 100%;
-    }
     ::v-deep .el-scrollbar__wrap {
-      @media screen and (min-width: 1200px) {
+      @media #{$lg-up} {
         height: calc(100vh - #{$heightExceptScrollBarInContainer + 0.5*$pageFooterHeight});
-      }
-      @media screen and (max-width: 1200px) {
-        height: 100%;
-        margin-right: -15px!important;
       }
     }
   }
@@ -814,19 +822,12 @@ $heightExceptScrollBarInContainer: 4px + $navBarHeight + 2*$appContainerPadding 
 
 .hasTagsView.hasPageFooter {
   .el-scrollbar {
-    @media screen and (min-width: 1200px) {
+    @media #{$lg-up} {
       height: calc(100vh - #{$heightExceptScrollBarInContainer + $tagsViewHeight + 0.5*$pageFooterHeight});
     }
-    @media screen and (max-width: 1200px) {
-      height: 100%;
-    }
     ::v-deep .el-scrollbar__wrap {
-      @media screen and (min-width: 1200px) {
+      @media #{$lg-up} {
         height: calc(100vh - #{$heightExceptScrollBarInContainer + $tagsViewHeight + 0.5*$pageFooterHeight});
-      }
-      @media screen and (max-width: 1200px) {
-        height: 100%;
-        margin-right: -18px!important;
       }
     }
   }
@@ -845,18 +846,20 @@ $heightExceptScrollBarInContainer: 4px + $navBarHeight + 2*$appContainerPadding 
     margin-left: 2px;
   }
 
-
   .node-link-num {
-    @media screen and (min-width: 1200px) {
+    @media #{$sm-up} {
       margin-left: 5px;
     }
-    @media screen and (max-width: 1200px) {
+    @media #{$sm-down} {
       display: none;
     }
   }
 
   .node-label {
     margin-left: 10px;
+    @media #{$xs-down} {
+      margin-left: 5px;
+    }
   }
 
   .sync-status {
@@ -871,25 +874,25 @@ $heightExceptScrollBarInContainer: 4px + $navBarHeight + 2*$appContainerPadding 
   .add-btn {
     color: #13ce66;
     margin-right: 15px;
+    @media #{$xs-down} {
+      margin-right: 8px;
+    }
   }
 
   .menu-link-api {
     color: #ffba00;
     margin-right: 75px;
-  }
-
-  .update-btn {
-    margin-left: 20px;
-  }
-
-  .btn-link-api {
-    color: #ffba00;
-    margin-left: 20px;
+    @media #{$xs-down} {
+      margin-right: 60px;
+    }
   }
 
   .delete-btn {
-    margin-left: 20px;
     color: #ff4949;
+    margin-left: 20px;
+    @media #{$xs-down} {
+      margin-left: 15px;
+    }
   }
 }
 
@@ -905,17 +908,17 @@ $heightExceptScrollBarInContainer: 4px + $navBarHeight + 2*$appContainerPadding 
   }
 
   .el-scrollbar {
-    @media screen and (min-width: 1200px) {
+    @media #{$lg-up} {
       height: 340px;
     }
-    @media screen and (max-width: 1200px) {
+    @media #{$lg-down} {
       height: 100%;
     }
     ::v-deep .el-scrollbar__wrap {
-      @media screen and (min-width: 1200px) {
+      @media #{$lg-up} {
         height: 340px;
       }
-      @media screen and (max-width: 1200px) {
+      @media #{$lg-down} {
         height: 100%;
       }
       margin-bottom: 10px;
@@ -933,17 +936,17 @@ $heightExceptScrollBarInContainer: 4px + $navBarHeight + 2*$appContainerPadding 
   }
 
   .el-scrollbar {
-    @media screen and (min-width: 1200px) {
+    @media #{$lg-up} {
       height: 210px;
     }
-    @media screen and (max-width: 1200px) {
+    @media #{$lg-down} {
       height: 345px;
     }
     ::v-deep .el-scrollbar__wrap {
-      @media screen and (min-width: 1200px) {
+      @media #{$lg-up} {
         height: 210px;
       }
-      @media screen and (max-width: 1200px) {
+      @media #{$lg-down} {
         height: 345px;
       }
     }
@@ -963,17 +966,25 @@ $heightExceptScrollBarInContainer: 4px + $navBarHeight + 2*$appContainerPadding 
   padding-left: 6px;
 }
 
-@media screen and (max-width: 1200px) {
+@media #{$sm-down} {
   .node-value.perm-value {
     display: none;
   }
+}
+
+@media #{$lg-down} {
   .app-container {
     padding-bottom: 0;
   }
+}
+
+@media #{$lg-down} {
   .api-card {
     margin-top: 20px;
   }
+}
 
+@media #{$sm-down} {
   #showApiPermValueBtn.el-button {
     display: none;
   }

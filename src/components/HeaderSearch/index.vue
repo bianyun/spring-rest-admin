@@ -22,7 +22,7 @@
 // make search results more in line with expectations
 import Fuse from 'fuse.js'
 import path from 'path'
-import { isExternal } from '@/utils/validate'
+import { isExternal } from '@/utils/validator'
 import { tempCreateATagAndClick } from '@/utils/core'
 
 export default {

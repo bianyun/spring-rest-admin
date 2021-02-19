@@ -87,7 +87,7 @@
 import { mapGetters } from 'vuex'
 import { MenuType, PermLevel, PermType } from '@/utils/enums'
 import treeUtil from '@/views/_module/_system/tree'
-import permApi from '@/api/_system/perm'
+import { permApi } from '@/api/_system/perm'
 import ElScrollbarFix from '@/components/ElScrollBarFix'
 
 export default {
@@ -344,17 +344,17 @@ $heightExceptScrollBarInContainer: 4px + $navBarHeight + 2*$appContainerPadding 
 
 ::v-deep {
   .el-scrollbar {
-    @media screen and (min-width: 1200px) {
+    @media #{$lg-up} {
       height: calc(100vh - #{$heightExceptScrollBarInContainer});
     }
-    @media screen and (max-width: 1200px) {
+    @media #{$lg-down} {
       height: 100%;
     }
     .el-scrollbar__wrap {
-      @media screen and (min-width: 1200px) {
+      @media #{$lg-up} {
         height: calc(100vh - #{$heightExceptScrollBarInContainer});
       }
-      @media screen and (max-width: 1200px) {
+      @media #{$lg-down} {
         height: 100%;
       }
       margin-bottom: 10px;
@@ -369,18 +369,12 @@ $heightExceptScrollBarInContainer: 4px + $navBarHeight + 2*$appContainerPadding 
 
 .hasTagsView {
   .el-scrollbar {
-    @media screen and (min-width: 1200px) {
+    @media #{$lg-up} {
       height: calc(100vh - #{$heightExceptScrollBarInContainer + $tagsViewHeight});
     }
-    @media screen and (max-width: 1200px) {
-      height: 100%;
-    }
     ::v-deep .el-scrollbar__wrap {
-      @media screen and (min-width: 1200px) {
+      @media #{$lg-up} {
         height: calc(100vh - #{$heightExceptScrollBarInContainer + $tagsViewHeight});
-      }
-      @media screen and (max-width: 1200px) {
-        height: 100%;
       }
     }
   }
@@ -388,18 +382,12 @@ $heightExceptScrollBarInContainer: 4px + $navBarHeight + 2*$appContainerPadding 
 
 .hasPageFooter {
   .el-scrollbar {
-    @media screen and (min-width: 1200px) {
+    @media #{$lg-up} {
       height: calc(100vh - #{$heightExceptScrollBarInContainer + 0.5*$pageFooterHeight});
     }
-    @media screen and (max-width: 1200px) {
-      height: 100%;
-    }
     ::v-deep .el-scrollbar__wrap {
-      @media screen and (min-width: 1200px) {
+      @media #{$lg-up} {
         height: calc(100vh - #{$heightExceptScrollBarInContainer + 0.5*$pageFooterHeight});
-      }
-      @media screen and (max-width: 1200px) {
-        height: 100%;
       }
     }
   }
@@ -407,24 +395,18 @@ $heightExceptScrollBarInContainer: 4px + $navBarHeight + 2*$appContainerPadding 
 
 .hasTagsView.hasPageFooter {
   .el-scrollbar {
-    @media screen and (min-width: 1200px) {
+    @media #{$lg-up} {
       height: calc(100vh - #{$heightExceptScrollBarInContainer + $tagsViewHeight + 0.5*$pageFooterHeight});
     }
-    @media screen and (max-width: 1200px) {
-      height: 100%;
-    }
     ::v-deep .el-scrollbar__wrap {
-      @media screen and (min-width: 1200px) {
+      @media #{$lg-up} {
         height: calc(100vh - #{$heightExceptScrollBarInContainer + $tagsViewHeight + 0.5*$pageFooterHeight});
-      }
-      @media screen and (max-width: 1200px) {
-        height: 100%;
       }
     }
   }
 }
 
-@media screen and (max-width: 1200px) {
+@media #{$sm-down} {
   #api-perms-card {
     margin-top: 20px;
   }
@@ -462,8 +444,8 @@ $heightExceptScrollBarInContainer: 4px + $navBarHeight + 2*$appContainerPadding 
   }
 
   .el-checkbox__input.is-disabled.is-checked .el-checkbox__inner {
-    background-color: #79bbff;
-    border-color: #79bbff;
+    background-color: #aed4fd;
+    border-color: #aed4fd;
   }
 
   .el-checkbox__input.is-disabled.is-checked .el-checkbox__inner::after {

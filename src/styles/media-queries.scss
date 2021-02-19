@@ -1,0 +1,52 @@
+//== Media queries breakpoints
+
+// Extra small screen / phone
+$screen-xs:                  430px;
+$screen-xs-min:              $screen-xs;
+
+// Small screen / tablet
+$screen-sm:                  768px;
+$screen-sm-min:              $screen-sm;
+
+// Medium screen / desktop
+$screen-md:                  992px;
+$screen-md-min:              $screen-md;
+
+// Large screen / wide desktop
+$screen-lg:                  1200px;
+$screen-lg-min:              $screen-lg;
+
+// Extra Large screen / wide desktop
+$screen-xl:                  1920px;
+$screen-xl-min:              $screen-lg;
+
+// So media queries don't overlap when required, provide a maximum
+$screen-xs-max:              ($screen-sm-min - 1);
+$screen-sm-max:              ($screen-md-min - 1);
+$screen-md-max:              ($screen-lg-min - 1);
+$screen-lg-max:              ($screen-xl-min - 1);
+
+$screen: "only screen";
+
+$xs-down: "#{$screen} and (max-width: #{$screen-xs-min - 1})";
+$xs-up: "#{$screen} and (min-width: #{$screen-xs-min})";
+$xs-only: "#{$screen} and (min-width: #{$screen-xs-min}) and (max-width: #{$screen-xs-max})";
+
+$sm-down: "#{$screen} and (max-width: #{$screen-xs-max})";
+$sm-up: "#{$screen} and (min-width: #{$screen-sm-min})";
+$sm-only: "#{$screen} and (min-width: #{$screen-sm-min}) and (max-width: #{$screen-sm-max})";
+
+$md-down: "#{$screen} and (max-width: #{$screen-sm-max})";
+$md-up: "#{$screen} and (min-width: #{$screen-md-min})";
+$md-only: "#{$screen} and (min-width: #{$screen-md-min}) and (max-width: #{$screen-md-max})";
+
+$lg-down: "#{$screen} and (max-width: #{$screen-md-max})";
+$lg-up: "#{$screen} and (min-width: #{$screen-lg-min})";
+$lg-only: "#{$screen} and (min-width: #{$screen-lg-min}) and (max-width: #{$screen-lg-max})";
+
+$xl-down: "#{$screen} and (max-width: #{$screen-xl-min})";
+$xl-up: "#{$screen} and (min-width: #{$screen-xl-min})";
+
+:export {
+  screenXsMaxWidth: $screen-xs-max;
+}

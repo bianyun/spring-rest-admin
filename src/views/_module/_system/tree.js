@@ -62,7 +62,7 @@ export default {
    * 根据输入的路由表，生成菜单权限树
    *
    * @param routeArr {array} 路由表
-   * @param parentValue {string} 父亲节点权限值
+   * @param parentValue {string|null} 父亲节点权限值
    */
   mapToMenuPermTree(routeArr, parentValue) {
     return routeArr.map((route) => {

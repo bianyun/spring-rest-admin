@@ -172,58 +172,6 @@ aside {
   }
 }
 
-.filter-container {
-  float: left;
-  @media screen and (min-width: 700px) {
-    padding-bottom: 0;
-  }
-
-  .filter-item {
-    display: inline-block;
-    vertical-align: middle;
-    margin-bottom: 10px;
-  }
-
-  @media screen and (max-width: 700px) {
-    .el-button.filter-item {
-      margin-bottom: 0;
-    }
-  }
-
-  .filter-item.el-input {
-    @media screen and (min-width: 700px) {
-      width: 200px;
-    }
-    @media screen and (max-width: 700px) {
-      width: 100%;
-    }
-    margin-right: 7px;
-  }
-
-  .filter-item.el-select {
-    @media screen and (min-width: 700px) {
-      width: 200px;
-    }
-    @media screen and (max-width: 700px) {
-      width: 100%;
-    }
-    margin-right: 7px;
-  }
-
-}
-
-.table-level-buttons {
-  float: right;
-  .filter-item {
-    display: inline-block;
-    vertical-align: middle;
-
-    @media screen and (max-width: 700px) {
-      margin-top: -4rem;
-    }
-  }
-}
-
 //refine vue-multiselect plugin
 .multiselect {
   line-height: 16px;
@@ -231,5 +179,9 @@ aside {
 
 .multiselect--active {
   z-index: 1000 !important;
+}
+
+.el-date-editor .el-input__inner {
+  cursor: pointer;
 }
 

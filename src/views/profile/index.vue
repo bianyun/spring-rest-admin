@@ -3,11 +3,11 @@
     <div v-if="user">
       <el-row :gutter="20">
 
-        <el-col :span="6" :xs="24">
+        <el-col :lg="6" :md="8" :sm="10" :xs="24">
           <user-card :user="user" />
         </el-col>
 
-        <el-col :span="18" :xs="24">
+        <el-col :lg="18" :md="16" :sm="14" :xs="24">
           <el-card id="main-card">
             <el-tabs v-model="activeTab">
               <el-tab-pane label="Activity" name="activity">
