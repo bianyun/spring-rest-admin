@@ -184,7 +184,7 @@ export default {
       const confirmLabel = row[this.getFullFlatQueryRecordKey(this.confirmLabelColumn)]
       this.$confirm(`您确定要停用${this.label}【${confirmLabel}】吗？`, '提示').then(() => {
         this.api.deactivateUserById(this.getIdValueOfFlatQueryObj(row)).then(() => {
-          this.fetchTableData(1).then(() => this.$notify.success(`${this.label}启用成功`))
+          this.fetchTableData(1).then(() => this.$notify.success(`${this.label}停用成功`))
         })
       }).finally(() => this.blurTargetButton(event))
     },
