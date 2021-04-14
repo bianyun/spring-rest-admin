@@ -1,6 +1,6 @@
 <template>
   <div class="footer" v-if="showFooter">
-    <span v-if="copyRightAvailable" class="copyright">&copy; {{yearInfo}} <a :href="copyrightLink">{{copyrightLabel}}</a>
+    <span v-if="copyRightAvailable" class="copyright">&copy; {{yearInfo}} <a :href="copyrightLink" target="_blank">{{copyrightLabel}}</a>
       <span v-if="isEnvDev" style="margin-left: 10px">[dpr = {{devicePixelRatio}}]</span>
     </span>
     <a v-if="policeBeianInfo" class="police-beian"
@@ -21,7 +21,7 @@ export default {
       policeBeianIcon,
       docmHeight: 0,
       showFooter: true,
-      copyrightParamRegex: "(\\d{4})\\s+(https?://[a-zA-Z.-0-9]+)\\s+(\\S+)",
+      copyrightParamRegex: "(\\d{4})\\s+(https?://[a-zA-Z0-9.-]+(/[a-zA-Z0-9.-]*)*)\\s+(\\S+)",
       startYear: null,
       thisYear: new Date().getFullYear(),
       yearInfo: null,
@@ -35,7 +35,7 @@ export default {
       const result = process.env.VUE_APP_FOOTER_INFO_COPYRIGHT.match(this.copyrightParamRegex)
       this.startYear = parseInt(result[1])
       this.copyrightLink = result[2]
-      this.copyrightLabel = result [3]
+      this.copyrightLabel = result [4]
       if (this.startYear < this.thisYear) {
         this.yearInfo = `${this.startYear}-${this.thisYear}`
       } else {
